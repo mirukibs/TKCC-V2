@@ -7,7 +7,9 @@ use InvalidArgumentException;
 class FullName
 {
     private string $firstName;
+
     private string $lastName;
+
     private ?string $middleName;
 
     public function __construct(string $firstName, string $lastName, ?string $middleName = null)
@@ -15,17 +17,17 @@ class FullName
         $firstName = trim($firstName);
         $lastName = trim($lastName);
         $middleName = $middleName ? trim($middleName) : null;
-        
+
         if (empty($firstName)) {
-            throw new InvalidArgumentException("First name cannot be empty.");
+            throw new InvalidArgumentException('First name cannot be empty.');
         }
-        
+
         if (empty($lastName)) {
-            throw new InvalidArgumentException("Last name cannot be empty.");
+            throw new InvalidArgumentException('Last name cannot be empty.');
         }
 
         if (strlen($firstName) > 100 || strlen($lastName) > 100 || ($middleName && strlen($middleName) > 100)) {
-            throw new InvalidArgumentException("Name parts cannot exceed 100 characters.");
+            throw new InvalidArgumentException('Name parts cannot exceed 100 characters.');
         }
 
         $this->firstName = $firstName;
@@ -53,7 +55,7 @@ class FullName
         if ($this->middleName) {
             return "{$this->firstName} {$this->middleName} {$this->lastName}";
         }
-        
+
         return "{$this->firstName} {$this->lastName}";
     }
 

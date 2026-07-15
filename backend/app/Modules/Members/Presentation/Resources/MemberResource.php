@@ -2,9 +2,9 @@
 
 namespace App\Modules\Members\Presentation\Resources;
 
+use App\Modules\Members\Domain\Entities\Member;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Modules\Members\Domain\Entities\Member;
 
 class MemberResource extends JsonResource
 {
@@ -26,7 +26,7 @@ class MemberResource extends JsonResource
             'position' => $member->getPosition(),
             'employment_status' => $member->getEmploymentStatus()?->value,
             'employment_notes' => $member->getEmploymentNotes(),
-            'household_id' => $member->getHouseholdId()
+            'household_id' => $member->getHouseholdId(),
         ];
     }
 }

@@ -5,7 +5,7 @@ const routes = [
     {
         path: '/',
         name: 'home',
-        component: () => import('../App.vue') // Placeholder
+        redirect: '/members'
     },
     ...membersRoutes
 ];

@@ -3,14 +3,14 @@
 namespace App\Modules\Members\Infrastructure\Repositories;
 
 use App\Modules\Members\Domain\Entities\Member;
-use App\Modules\Members\Domain\Repositories\MemberRepositoryInterface;
-use App\Modules\Members\Infrastructure\Models\MemberModel;
-use App\Modules\Members\Domain\ValueObjects\FullName;
-use App\Modules\Members\Domain\ValueObjects\DateOfBirth;
-use App\Modules\Members\Domain\ValueObjects\PhoneNumber;
+use App\Modules\Members\Domain\Enums\EmploymentStatus;
 use App\Modules\Members\Domain\Enums\Gender;
 use App\Modules\Members\Domain\Enums\MaritalStatus;
-use App\Modules\Members\Domain\Enums\EmploymentStatus;
+use App\Modules\Members\Domain\Repositories\MemberRepositoryInterface;
+use App\Modules\Members\Domain\ValueObjects\DateOfBirth;
+use App\Modules\Members\Domain\ValueObjects\FullName;
+use App\Modules\Members\Domain\ValueObjects\PhoneNumber;
+use App\Modules\Members\Infrastructure\Models\MemberModel;
 
 class MemberRepository implements MemberRepositoryInterface
 {
@@ -29,7 +29,7 @@ class MemberRepository implements MemberRepositoryInterface
                 'position' => $member->getPosition(),
                 'employment_status' => $member->getEmploymentStatus()?->value,
                 'employment_notes' => $member->getEmploymentNotes(),
-                'household_id' => $member->getHouseholdId()
+                'household_id' => $member->getHouseholdId(),
             ]
         );
 
@@ -39,8 +39,8 @@ class MemberRepository implements MemberRepositoryInterface
     public function findById(int $id): ?Member
     {
         $model = MemberModel::find($id);
-        
-        if (!$model) {
+
+        if (! $model) {
             return null;
         }
 
@@ -51,11 +51,11 @@ class MemberRepository implements MemberRepositoryInterface
     {
         $models = MemberModel::all();
         $entities = [];
-        
+
         foreach ($models as $model) {
             $entities[] = $this->toEntity($model);
         }
-        
+
         return $entities;
     }
 

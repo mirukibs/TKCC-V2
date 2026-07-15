@@ -20,12 +20,12 @@ class PhoneNumber
 
         // Tanzanian local format (e.g., 0712345678 -> +255712345678)
         if (preg_match('/^0([67]\d{8})$/', $phone, $matches)) {
-            return '+255' . $matches[1];
+            return '+255'.$matches[1];
         }
 
         // Tanzanian format missing + (e.g., 255712345678 -> +255712345678)
         if (preg_match('/^255([67]\d{8})$/', $phone, $matches)) {
-            return '+255' . $matches[1];
+            return '+255'.$matches[1];
         }
 
         // International format (must start with + and have 10-15 digits)

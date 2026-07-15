@@ -19,6 +19,6 @@ class MemberModel extends Model
         'position',
         'employment_status',
         'employment_notes',
-        'household_id'
+        'household_id',
     ];
 }

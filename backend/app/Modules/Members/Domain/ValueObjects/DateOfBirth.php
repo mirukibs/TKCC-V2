@@ -12,13 +12,13 @@ class DateOfBirth
     public function __construct(string $dateString)
     {
         $date = DateTimeImmutable::createFromFormat('Y-m-d', $dateString);
-        
-        if (!$date || $date->format('Y-m-d') !== $dateString) {
-            throw new InvalidArgumentException("Invalid date of birth format. Use YYYY-MM-DD.");
+
+        if (! $date || $date->format('Y-m-d') !== $dateString) {
+            throw new InvalidArgumentException('Invalid date of birth format. Use YYYY-MM-DD.');
         }
 
-        if ($date > new DateTimeImmutable()) {
-            throw new InvalidArgumentException("Date of birth cannot be in the future.");
+        if ($date > new DateTimeImmutable) {
+            throw new InvalidArgumentException('Date of birth cannot be in the future.');
         }
 
         $this->date = $date;
@@ -31,7 +31,8 @@ class DateOfBirth
 
     public function getAge(): int
     {
-        $now = new DateTimeImmutable();
+        $now = new DateTimeImmutable;
+
         return $now->diff($this->date)->y;
     }
 

@@ -2,11 +2,11 @@
 
 namespace App\Modules\Members\Presentation\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\Enum;
+use App\Modules\Members\Domain\Enums\EmploymentStatus;
 use App\Modules\Members\Domain\Enums\Gender;
 use App\Modules\Members\Domain\Enums\MaritalStatus;
-use App\Modules\Members\Domain\Enums\EmploymentStatus;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
 
 class RegisterMemberRequest extends FormRequest
 {
@@ -28,7 +28,7 @@ class RegisterMemberRequest extends FormRequest
             'position' => 'nullable|string|max:255',
             'employment_status' => ['nullable', new Enum(EmploymentStatus::class)],
             'employment_notes' => 'nullable|string',
-            'household_id' => 'nullable|integer'
+            'household_id' => 'nullable|integer',
         ];
     }
 }

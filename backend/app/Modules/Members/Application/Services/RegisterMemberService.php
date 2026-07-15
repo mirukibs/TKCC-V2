@@ -4,9 +4,9 @@ namespace App\Modules\Members\Application\Services;
 
 use App\Modules\Members\Application\DTOs\RegisterMemberDTO;
 use App\Modules\Members\Domain\Entities\Member;
-use App\Modules\Members\Domain\Repositories\MemberRepositoryInterface;
 use App\Modules\Members\Domain\Factories\MemberFactory;
 use App\Modules\Members\Domain\Policies\MemberRegistrationPolicy;
+use App\Modules\Members\Domain\Repositories\MemberRepositoryInterface;
 
 class RegisterMemberService
 {

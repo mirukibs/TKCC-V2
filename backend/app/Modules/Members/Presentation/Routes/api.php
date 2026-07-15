@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Modules\Members\Presentation\Controllers\MemberController;
+use Illuminate\Support\Facades\Route;
 
 Route::prefix('members')->group(function () {
     Route::get('/', [MemberController::class, 'index']);

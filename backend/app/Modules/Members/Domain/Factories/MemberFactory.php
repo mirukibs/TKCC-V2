@@ -3,12 +3,12 @@
 namespace App\Modules\Members\Domain\Factories;
 
 use App\Modules\Members\Domain\Entities\Member;
-use App\Modules\Members\Domain\ValueObjects\FullName;
-use App\Modules\Members\Domain\ValueObjects\DateOfBirth;
-use App\Modules\Members\Domain\ValueObjects\PhoneNumber;
+use App\Modules\Members\Domain\Enums\EmploymentStatus;
 use App\Modules\Members\Domain\Enums\Gender;
 use App\Modules\Members\Domain\Enums\MaritalStatus;
-use App\Modules\Members\Domain\Enums\EmploymentStatus;
+use App\Modules\Members\Domain\ValueObjects\DateOfBirth;
+use App\Modules\Members\Domain\ValueObjects\FullName;
+use App\Modules\Members\Domain\ValueObjects\PhoneNumber;
 
 class MemberFactory
 {

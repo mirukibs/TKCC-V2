@@ -2,24 +2,33 @@
 
 namespace App\Modules\Members\Domain\Entities;
 
-use App\Modules\Members\Domain\ValueObjects\FullName;
-use App\Modules\Members\Domain\ValueObjects\DateOfBirth;
-use App\Modules\Members\Domain\ValueObjects\PhoneNumber;
+use App\Modules\Members\Domain\Enums\EmploymentStatus;
 use App\Modules\Members\Domain\Enums\Gender;
 use App\Modules\Members\Domain\Enums\MaritalStatus;
-use App\Modules\Members\Domain\Enums\EmploymentStatus;
+use App\Modules\Members\Domain\ValueObjects\DateOfBirth;
+use App\Modules\Members\Domain\ValueObjects\FullName;
+use App\Modules\Members\Domain\ValueObjects\PhoneNumber;
 
 class Member
 {
     private ?int $id;
+
     private FullName $name;
+
     private ?DateOfBirth $dob;
+
     private ?Gender $gender;
+
     private ?MaritalStatus $maritalStatus;
+
     private ?PhoneNumber $phone;
+
     private ?string $position;
+
     private ?EmploymentStatus $employmentStatus;
+
     private ?string $employmentNotes;
+
     private ?int $householdId;
 
     public function __construct(
