@@ -4,8 +4,8 @@ namespace App\Modules\Members\Presentation\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Members\Application\DTOs\RegisterMemberDTO;
-use App\Modules\Members\Application\Services\RegisterMemberService;
 use App\Modules\Members\Application\Services\GetMemberService;
+use App\Modules\Members\Application\Services\RegisterMemberService;
 use App\Modules\Members\Domain\Repositories\MemberRepositoryInterface;
 use App\Modules\Members\Presentation\Requests\RegisterMemberRequest;
 use App\Modules\Members\Presentation\Resources\MemberResource;
