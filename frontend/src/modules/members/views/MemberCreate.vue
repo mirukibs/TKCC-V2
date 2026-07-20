@@ -99,6 +99,19 @@
           </div>
         </div>
 
+        <div class="form-section mt-8">
+          <h3 class="section-title">Household Information</h3>
+          <div class="form-group">
+            <label class="form-label">Household</label>
+            <select class="form-control" v-model="form.household_id">
+              <option value="">No Household</option>
+              <option v-for="household in households" :key="household.id" :value="household.id">
+                {{ household.name }} ({{ household.community_id }})
+              </option>
+            </select>
+          </div>
+        </div>
+
         <div class="form-actions mt-8 flex justify-end gap-4">
           <router-link to="/members" class="btn btn-secondary">Cancel</router-link>
           <button type="submit" class="btn btn-primary" :disabled="loading">
@@ -112,12 +125,14 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import MemberService from '../services/MemberService';
+import HouseholdService from '../../households/services/HouseholdService';
 
 const router = useRouter();
 const loading = ref(false);
+const households = ref([]);
 
 const form = ref({
   first_name: '',
@@ -129,7 +144,17 @@ const form = ref({
   phone: '',
   position: '',
   employment_status: '',
-  employment_notes: ''
+  employment_notes: '',
+  household_id: ''
+});
+
+onMounted(async () => {
+  try {
+    const data = await HouseholdService.getHouseholds();
+    households.value = data?.data ?? data ?? [];
+  } catch (error) {
+    console.error('Failed to load households', error);
+  }
 });
 
 const submitForm = async () => {

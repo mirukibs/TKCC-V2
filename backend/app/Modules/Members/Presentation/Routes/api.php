@@ -7,4 +7,5 @@ Route::prefix('members')->group(function () {
     Route::get('/', [MemberController::class, 'index']);
     Route::post('/', [MemberController::class, 'store']);
     Route::get('/{id}', [MemberController::class, 'show']);
+    Route::put('/{id}', [MemberController::class, 'update']);
 });

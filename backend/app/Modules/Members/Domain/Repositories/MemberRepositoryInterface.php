@@ -10,7 +10,7 @@ interface MemberRepositoryInterface
 
     public function findById(int $id): ?Member;
 
-    public function findAll(): array;
+    public function findAll(array $filters = []): array;
 
     public function delete(int $id): bool;
 }

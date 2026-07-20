@@ -1,0 +1,20 @@
+@startuml
+package "Households Bounded Context" {
+    class Household <<Aggregate Root>> {
+        - id : string
+        - name : string
+        - ownershipType : OwnershipType
+        - communityId : string
+        - leaderId : string
+    }
+
+    enum OwnershipType {
+        OWNER
+        TENANT
+        FAMILY
+        OTHER
+    }
+}
+
+Household *-- OwnershipType
+@enduml

@@ -1,0 +1,33 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Church Admin" as Admin
+
+rectangle "Members Bounded Context" {
+  usecase "Register New Member" as UC1
+  usecase "View Member Profile" as UC2
+  usecase "List Congregation Members" as UC3
+  usecase "Filter Members by Status" as UC4
+  usecase "Search Members by Name" as UC5
+}
+
+Admin --> UC1
+Admin --> UC2
+Admin --> UC3
+Admin --> UC4
+Admin --> UC5
+
+UC4 .> UC3 : <<extends>>
+UC5 .> UC3 : <<extends>>
+
+note right of UC1
+  Validates phone numbers (Tanzanian/Intl)
+  and sanitizes input via Domain Value Objects.
+end note
+
+note right of UC2
+  Fetches full details including Household ID
+  and parses employment statuses into readable formats.
+end note
+@enduml

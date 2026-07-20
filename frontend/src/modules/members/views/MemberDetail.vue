@@ -8,7 +8,7 @@
         </router-link>
       </div>
       <div class="flex gap-2">
-        <button class="btn btn-secondary">Edit Profile</button>
+        <router-link :to="`/members/${member.id}/edit`" class="btn btn-secondary">Edit Profile</router-link>
       </div>
     </div>
 

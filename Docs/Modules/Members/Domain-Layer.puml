@@ -1,0 +1,53 @@
+@startuml
+package "Members Bounded Context" {
+    class Member <<Aggregate Root>> {
+        - id : string
+        - fullName : FullName
+        - phoneNumber : PhoneNumber
+        - gender : Gender
+        - maritalStatus : MaritalStatus
+        - employmentStatus : EmploymentStatus
+        - dateOfBirth : DateOfBirth
+        - householdId : string
+    }
+
+    class FullName <<Value Object>> {
+        - firstName : string
+        - lastName : string
+    }
+
+    class PhoneNumber <<Value Object>> {
+        - number : string
+    }
+
+    class DateOfBirth <<Value Object>> {
+        - date : Date
+    }
+
+    enum Gender {
+        MALE
+        FEMALE
+    }
+
+    enum MaritalStatus {
+        SINGLE
+        MARRIED
+        DIVORCED
+        WIDOWED
+    }
+
+    enum EmploymentStatus {
+        EMPLOYED
+        UNEMPLOYED
+        STUDENT
+        RETIRED
+    }
+}
+
+Member *-- FullName
+Member *-- PhoneNumber
+Member *-- DateOfBirth
+Member *-- Gender
+Member *-- MaritalStatus
+Member *-- EmploymentStatus
+@enduml

@@ -98,4 +98,25 @@ describe('MemberDetail.vue', () => {
 
         expect(wrapper.text()).toContain('Member not found.');
     });
+
+    it('returns correct badge class for different employment statuses', async () => {
+        // We can test this by mounting members with different statuses and checking classes
+        const statuses = [
+            { status: 'student', expectedClass: 'badge-primary' },
+            { status: 'unemployed', expectedClass: 'badge-warning' },
+            { status: 'unknown_status', expectedClass: 'badge-neutral' }
+        ];
+
+        for (const s of statuses) {
+            MemberService.getMember.mockResolvedValueOnce({ 
+                data: { id: 1, full_name: 'Test', employment_status: s.status } 
+            });
+            const wrapper = mount(MemberDetail, {
+                global: { stubs: { RouterLink } }
+            });
+            await flushPromises();
+            const badge = wrapper.find('.badge');
+            expect(badge.classes()).toContain(s.expectedClass);
+        }
+    });
 });

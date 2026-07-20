@@ -5,6 +5,7 @@
       <nav>
         <router-link to="/">Home</router-link>
         <router-link to="/members">Members</router-link>
+        <router-link to="/households">Households</router-link>
       </nav>
     </header>
     <main>

@@ -1,0 +1,33 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Church Admin" as Admin
+
+rectangle "Households Bounded Context" {
+  usecase "Register New Household" as UC1
+  usecase "View Household Profile" as UC2
+  usecase "List Households" as UC3
+  usecase "Filter Households by Ownership" as UC4
+  usecase "Search Households by Name" as UC5
+  usecase "Assign Household Leader" as UC6
+}
+
+Admin --> UC1
+Admin --> UC2
+Admin --> UC3
+Admin --> UC4
+Admin --> UC5
+Admin --> UC6
+
+UC4 .> UC3 : <<extends>>
+UC5 .> UC3 : <<extends>>
+
+note right of UC1
+  Validates ownership types and references to Community IDs.
+end note
+
+note right of UC2
+  Fetches full details including the assigned leader profile.
+end note
+@enduml

@@ -1,0 +1,31 @@
+@startuml
+autonumber
+actor User
+participant "Vue Component\n(HouseholdCreate.vue)" as UI
+participant "Axios Client\n(HouseholdService.js)" as Client
+participant "Controller\n(HouseholdController)" as Controller
+participant "DTO\n(RegisterHouseholdDTO)" as DTO
+participant "Service\n(RegisterHouseholdService)" as Service
+participant "Domain Entity\n(Household)" as Entity
+participant "Repository\n(EloquentHouseholdRepository)" as Repo
+database "SQLite DB" as DB
+
+User -> UI : Fills form and clicks "Save"
+UI -> UI : Validates basic inputs (V-Model)
+UI -> Client : createHousehold(payload)
+Client -> Controller : POST /api/households (JSON)
+Controller -> Controller : Validates Request (FormRequest)
+Controller -> DTO : new RegisterHouseholdDTO(...)
+DTO --> Controller : Returns DTO instance
+Controller -> Service : execute(dto)
+Service -> Entity : new Household(id, name, ownership...)
+Entity --> Service : Returns validated Entity
+Service -> Repo : save(Entity)
+Repo -> DB : INSERT INTO households...
+DB --> Repo : Success
+Repo --> Service : Returns persisted Entity
+Service --> Controller : Returns persisted Entity
+Controller -> Client : 201 Created (HouseholdResource)
+Client --> UI : Resolves Promise
+UI -> User : Shows success alert & redirects to List
+@enduml

@@ -49,9 +49,9 @@ describe('MembersList.vue', () => {
     });
 
     it('filters members by search query', async () => {
+        vi.useFakeTimers();
         const mockMembers = [
-            { id: 1, full_name: 'John Doe' },
-            { id: 2, full_name: 'Jane Smith' }
+            { id: 1, full_name: 'John Doe' }
         ];
         MemberService.getMembers.mockResolvedValue(mockMembers);
         
@@ -60,20 +60,20 @@ describe('MembersList.vue', () => {
         });
 
         await flushPromises();
-        expect(wrapper.text()).toContain('John Doe');
-        expect(wrapper.text()).toContain('Jane Smith');
+        MemberService.getMembers.mockClear();
 
         // Trigger search
         await wrapper.find('input[placeholder="Search members..."]').setValue('Jane');
+        vi.advanceTimersByTime(300);
         
-        expect(wrapper.text()).not.toContain('John Doe');
-        expect(wrapper.text()).toContain('Jane Smith');
+        expect(MemberService.getMembers).toHaveBeenCalledWith({ search: 'Jane' });
+        vi.useRealTimers();
     });
 
     it('filters members by status', async () => {
+        vi.useFakeTimers();
         const mockMembers = [
-            { id: 1, full_name: 'John Doe', employment_status: 'employed' },
-            { id: 2, full_name: 'Jane Smith', employment_status: 'student' }
+            { id: 1, full_name: 'John Doe', employment_status: 'employed' }
         ];
         MemberService.getMembers.mockResolvedValue(mockMembers);
         
@@ -82,13 +82,15 @@ describe('MembersList.vue', () => {
         });
 
         await flushPromises();
+        MemberService.getMembers.mockClear();
 
         // Trigger filter
         const select = wrapper.find('select');
         await select.setValue('student');
+        vi.advanceTimersByTime(300);
         
-        expect(wrapper.text()).not.toContain('John Doe');
-        expect(wrapper.text()).toContain('Jane Smith');
+        expect(MemberService.getMembers).toHaveBeenCalledWith({ status: 'student' });
+        vi.useRealTimers();
     });
 
     it('handles missing data gracefully', async () => {
@@ -108,14 +110,49 @@ describe('MembersList.vue', () => {
         expect(wrapper.text()).toContain('Unknown'); // unknown status formats to Unknown and uses badge-neutral
     });
 
-    it('shows no members found message when empty', async () => {
-        MemberService.getMembers.mockResolvedValue([]);
+    it('shows empty state when no members match search', async () => {
+        MemberService.getMembers.mockResolvedValueOnce({ data: [] });
         
         const wrapper = mount(MembersList, {
             global: { stubs: { RouterLink } }
         });
-
+        
         await flushPromises();
+
         expect(wrapper.text()).toContain('No members found.');
+    });
+
+    it('handles api errors gracefully and logs to console', async () => {
+        const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+        MemberService.getMembers.mockRejectedValueOnce(new Error('Network error'));
+        
+        const wrapper = mount(MembersList, {
+            global: { stubs: { RouterLink } }
+        });
+        
+        await flushPromises();
+
+        expect(consoleSpy).toHaveBeenCalledWith('Failed to load members', expect.any(Error));
+        consoleSpy.mockRestore();
+    });
+
+    it('returns correct badge class for different employment statuses', async () => {
+        const mockMembers = [
+            { id: 1, first_name: 'A', last_name: 'B', employment_status: 'student' },
+            { id: 2, first_name: 'C', last_name: 'D', employment_status: 'unemployed' },
+            { id: 3, first_name: 'E', last_name: 'F', employment_status: 'unknown' }
+        ];
+        MemberService.getMembers.mockResolvedValueOnce({ data: mockMembers });
+        
+        const wrapper = mount(MembersList, {
+            global: { stubs: { RouterLink } }
+        });
+        
+        await flushPromises();
+        
+        const badges = wrapper.findAll('.badge');
+        expect(badges[0].classes()).toContain('badge-primary'); // student
+        expect(badges[1].classes()).toContain('badge-warning'); // unemployed
+        expect(badges[2].classes()).toContain('badge-neutral'); // unknown
     });
 });

@@ -47,9 +47,24 @@ class MemberRepository implements MemberRepositoryInterface
         return $this->toEntity($model);
     }
 
-    public function findAll(): array
+    public function findAll(array $filters = []): array
     {
-        $models = MemberModel::all();
+        $query = MemberModel::query();
+
+        if (! empty($filters['search'])) {
+            $search = '%'.$filters['search'].'%';
+            $query->where(function ($q) use ($search) {
+                $q->where('first_name', 'LIKE', $search)
+                    ->orWhere('last_name', 'LIKE', $search)
+                    ->orWhere('middle_name', 'LIKE', $search);
+            });
+        }
+
+        if (! empty($filters['status'])) {
+            $query->where('employment_status', $filters['status']);
+        }
+
+        $models = $query->get();
         $entities = [];
 
         foreach ($models as $model) {

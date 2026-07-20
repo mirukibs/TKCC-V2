@@ -8,6 +8,8 @@ vi.mock('@/plugins/axios', () => {
         default: {
             get: vi.fn(),
             post: vi.fn(),
+            put: vi.fn(),
+            delete: vi.fn(),
         }
     }
 });
@@ -23,7 +25,7 @@ describe('MemberService', () => {
 
         const result = await MemberService.getMembers();
 
-        expect(api.get).toHaveBeenCalledWith('/members');
+        expect(api.get).toHaveBeenCalledWith('/members', { params: {} });
         expect(api.get).toHaveBeenCalledTimes(1);
         expect(result).toEqual(mockResponse.data);
     });
@@ -49,5 +51,25 @@ describe('MemberService', () => {
         expect(api.post).toHaveBeenCalledWith('/members', payload);
         expect(api.post).toHaveBeenCalledTimes(1);
         expect(result).toEqual(mockResponse.data);
+    });
+
+    it('should update a member', async () => {
+        const payload = { first_name: 'Jane', last_name: 'Smith' };
+        const mockResponse = { data: { id: 2, first_name: 'Jane', last_name: 'Smith' } };
+        api.put.mockResolvedValueOnce(mockResponse);
+
+        const result = await MemberService.updateMember(2, payload);
+        expect(api.put).toHaveBeenCalledWith('/members/2', payload);
+        expect(api.put).toHaveBeenCalledTimes(1);
+        expect(result).toEqual(mockResponse.data);
+    });
+
+    it('should delete a member', async () => {
+        api.delete.mockResolvedValueOnce({ data: null });
+
+        const result = await MemberService.deleteMember(2);
+        expect(api.delete).toHaveBeenCalledWith('/members/2');
+        expect(api.delete).toHaveBeenCalledTimes(1);
+        expect(result).toBeNull();
     });
 });

@@ -1,0 +1,31 @@
+@startuml
+autonumber
+actor User
+participant "Vue Component\n(MemberCreate.vue)" as UI
+participant "Axios Client\n(MemberService.js)" as Client
+participant "Controller\n(MemberController)" as Controller
+participant "DTO\n(RegisterMemberDTO)" as DTO
+participant "Service\n(RegisterMemberService)" as Service
+participant "Domain Entity\n(Member)" as Entity
+participant "Repository\n(EloquentMemberRepository)" as Repo
+database "SQLite DB" as DB
+
+User -> UI : Fills form and clicks "Save"
+UI -> UI : Validates basic inputs (V-Model)
+UI -> Client : createMember(payload)
+Client -> Controller : POST /api/members (JSON)
+Controller -> Controller : Validates Request (FormRequest)
+Controller -> DTO : new RegisterMemberDTO(...)
+DTO --> Controller : Returns DTO instance
+Controller -> Service : execute(dto)
+Service -> Entity : new Member(id, FullName, PhoneNumber...)
+Entity --> Service : Returns validated Entity
+Service -> Repo : save(Entity)
+Repo -> DB : INSERT INTO members...
+DB --> Repo : Success
+Repo --> Service : Returns persisted Entity
+Service --> Controller : Returns persisted Entity
+Controller -> Client : 201 Created (MemberResource)
+Client --> UI : Resolves Promise
+UI -> User : Shows success alert & redirects to List
+@enduml

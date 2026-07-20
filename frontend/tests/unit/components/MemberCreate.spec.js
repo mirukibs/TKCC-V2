@@ -19,11 +19,21 @@ vi.mock('@/modules/members/services/MemberService', () => ({
     }
 }));
 
+vi.mock('@/modules/households/services/HouseholdService', () => ({
+    default: {
+        getHouseholds: vi.fn()
+    }
+}));
+
+import HouseholdService from '@/modules/households/services/HouseholdService';
+
 describe('MemberCreate.vue', () => {
     beforeEach(() => {
         vi.clearAllMocks();
         // stub global alert
         global.alert = vi.fn();
+        // Mock default success for households
+        HouseholdService.getHouseholds.mockResolvedValue({ data: [{ id: 1, name: 'Household 1', community_id: 10 }] });
     });
 
     it('renders the form correctly', () => {
@@ -83,5 +93,20 @@ describe('MemberCreate.vue', () => {
         expect(MemberService.createMember).toHaveBeenCalledTimes(1);
         expect(mockRouter.push).not.toHaveBeenCalled();
         expect(global.alert).toHaveBeenCalledWith('Failed to save member. Please check the inputs.');
+    });
+
+    it('handles error when failing to load households on mount', async () => {
+        const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+        HouseholdService.getHouseholds.mockRejectedValueOnce(new Error('Network error'));
+        
+        const wrapper = mount(MemberCreate, {
+            global: { stubs: { RouterLink } }
+        });
+        
+        await flushPromises();
+        
+        expect(HouseholdService.getHouseholds).toHaveBeenCalledTimes(1);
+        expect(consoleSpy).toHaveBeenCalledWith('Failed to load households', expect.any(Error));
+        consoleSpy.mockRestore();
     });
 });

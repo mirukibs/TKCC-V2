@@ -1,0 +1,42 @@
+@startuml
+skinparam componentStyle uml2
+skinparam handwritten false
+
+package "Client Side" {
+    [Vue 3 SPA (Vite)] as Frontend
+
+    package "Vue Modules" {
+        [Router]
+        [Members Module]
+        [Households Module]
+    }
+
+    Frontend *-- [Router]
+    [Router] --> [Members Module]
+    [Router] --> [Households Module]
+}
+
+package "Server Side (Laravel 11 API)" {
+
+    package "Module: Members" {
+        [MemberController]
+    }
+
+    package "Module: Households" {
+        [HouseholdController]
+    }
+
+    [API Routes] --> [MemberController]
+    [API Routes] --> [HouseholdController]
+}
+
+database "SQLite Database" as DB
+
+' Relationships
+[Members Module] .right.> [API Routes] : HTTP/JSON
+[Households Module] .right.> [API Routes] : HTTP/JSON
+
+[MemberController] --> DB : Active Record Queries
+[HouseholdController] --> DB : Active Record Queries
+
+@enduml

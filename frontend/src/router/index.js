@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import membersRoutes from '../modules/members/router';
+import householdsRoutes from '../modules/households/router';
 
 const routes = [
     {
@@ -7,7 +8,8 @@ const routes = [
         name: 'home',
         redirect: '/members'
     },
-    ...membersRoutes
+    ...membersRoutes,
+    ...householdsRoutes
 ];
 
 const router = createRouter({

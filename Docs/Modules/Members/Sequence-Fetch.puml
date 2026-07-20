@@ -1,0 +1,24 @@
+@startuml
+autonumber
+participant "Vue Component\n(MemberDetail.vue)" as UI
+participant "API Client\n(MemberService.js)" as Client
+participant "Controller\n(MemberController)" as Controller
+participant "Service\n(GetMemberService)" as Service
+participant "Repository\n(EloquentMemberRepository)" as Repo
+database "SQLite DB" as DB
+
+UI -> UI : onMounted (reads ID from route)
+UI -> Client : getMember(id)
+Client -> Controller : GET /api/members/{id}
+Controller -> Service : execute(id)
+Service -> Repo : findById(id)
+Repo -> DB : SELECT * FROM members WHERE id=?
+DB --> Repo : Raw Data Row
+Repo -> Repo : Reconstitutes Domain Entity (Member)
+Repo --> Service : Returns Entity
+Service --> Controller : Returns Entity
+Controller -> Controller : Formats via MemberResource
+Controller -> Client : 200 OK (JSON Data)
+Client --> UI : Data Binding
+UI -> UI : Updates DOM
+@enduml
