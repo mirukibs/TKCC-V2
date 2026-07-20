@@ -20,7 +20,7 @@ Admin --> UC4
 Admin --> UC5
 Admin --> UC6
 
-UC4 .> UC3 : <<extends>>
+UC4 .> UC3 : <<extends>> 
 UC5 .> UC3 : <<extends>>
 
 note right of UC1
