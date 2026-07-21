@@ -2,7 +2,6 @@
 
 namespace Tests\Unit\Modules\Communities\Infrastructure\Repositories;
 
-use App\Modules\Communities\Domain\Entities\Community;
 use App\Modules\Communities\Domain\Factories\CommunityFactory;
 use App\Modules\Communities\Infrastructure\Models\CommunityModel;
 use App\Modules\Communities\Infrastructure\Repositories\EloquentCommunityRepository;
@@ -15,19 +14,20 @@ class CommunityRepositoryTest extends TestCase
     use RefreshDatabase;
 
     private EloquentCommunityRepository $repository;
+
     private CommunityFactory $factory;
 
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Ensure zones exist since community_id has a foreign key to zones table
         DB::table('zones')->insert([
             ['id' => 1, 'name' => 'Zone 1', 'created_at' => now(), 'updated_at' => now()],
             ['id' => 2, 'name' => 'Zone 2', 'created_at' => now(), 'updated_at' => now()],
         ]);
 
-        $this->factory = new CommunityFactory();
+        $this->factory = new CommunityFactory;
         $this->repository = new EloquentCommunityRepository($this->factory);
     }
 
@@ -59,7 +59,7 @@ class CommunityRepositoryTest extends TestCase
     public function test_can_update_community()
     {
         $saved = $this->repository->save($this->factory->create('Old', 1));
-        
+
         $updatedCommunity = $this->factory->reconstitute($saved->getId(), 'New', 2);
         $this->repository->save($updatedCommunity);
 

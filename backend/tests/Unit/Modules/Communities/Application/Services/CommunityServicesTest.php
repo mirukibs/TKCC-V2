@@ -10,21 +10,22 @@ use App\Modules\Communities\Application\Services\ListCommunitiesService;
 use App\Modules\Communities\Application\Services\RegisterCommunityService;
 use App\Modules\Communities\Application\Services\UpdateCommunityService;
 use App\Modules\Communities\Domain\Entities\Community;
+use App\Modules\Communities\Domain\Exceptions\CommunityNotFoundException;
 use App\Modules\Communities\Domain\Factories\CommunityFactory;
 use App\Modules\Communities\Domain\Repositories\CommunityRepositoryInterface;
-use App\Modules\Communities\Domain\Exceptions\CommunityNotFoundException;
 use App\Modules\SharedKernel\Domain\ValueObjects\Name;
 use PHPUnit\Framework\TestCase;
 
 class CommunityServicesTest extends TestCase
 {
     private $repository;
+
     private $factory;
 
     protected function setUp(): void
     {
         $this->repository = $this->createMock(CommunityRepositoryInterface::class);
-        $this->factory = new CommunityFactory();
+        $this->factory = new CommunityFactory;
     }
 
     public function test_register_community_service_creates_and_saves_community()
@@ -94,7 +95,7 @@ class CommunityServicesTest extends TestCase
 
         $this->repository->expects($this->once())
             ->method('save')
-            ->willReturnCallback(fn($c) => $c);
+            ->willReturnCallback(fn ($c) => $c);
 
         $dto = new UpdateCommunityDTO('New Name', 2);
         $service = new UpdateCommunityService($this->repository, $this->factory);

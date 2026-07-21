@@ -13,11 +13,11 @@ class Name
         $value = trim($value);
 
         if (empty($value)) {
-            throw new InvalidNameException("Name cannot be empty.");
+            throw new InvalidNameException('Name cannot be empty.');
         }
 
         if (strlen($value) > 150) {
-            throw new InvalidNameException("Name cannot exceed 150 characters.");
+            throw new InvalidNameException('Name cannot exceed 150 characters.');
         }
 
         $this->value = $value;

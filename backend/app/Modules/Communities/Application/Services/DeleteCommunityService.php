@@ -15,8 +15,8 @@ class DeleteCommunityService
     {
         $community = $this->repository->findById($id);
 
-        if (!$community) {
-            throw new CommunityNotFoundException("Community not found.");
+        if (! $community) {
+            throw new CommunityNotFoundException('Community not found.');
         }
 
         return $this->repository->delete($id);

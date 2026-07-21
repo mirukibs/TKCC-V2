@@ -2,15 +2,14 @@
 
 namespace App\Modules\Communities\Presentation\Resources;
 
+use App\Modules\Communities\Domain\Entities\Community;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Modules\Communities\Domain\Entities\Community;
 
 class CommunityResource extends JsonResource
 {
     /**
-     * @param Request $request
-     * @return array
+     * @param  Request  $request
      */
     public function toArray($request): array
     {

@@ -2,13 +2,15 @@
 
 namespace App\Modules\Communities\Domain\Entities;
 
-use App\Modules\SharedKernel\Domain\ValueObjects\Name;
 use App\Modules\Communities\Domain\Exceptions\InvalidCommunityDataException;
+use App\Modules\SharedKernel\Domain\ValueObjects\Name;
 
 class Community
 {
     private ?int $id;
+
     private Name $name;
+
     private int $zoneId;
 
     public function __construct(?int $id, Name $name, int $zoneId)
@@ -17,7 +19,7 @@ class Community
         $this->name = $name;
 
         if ($zoneId <= 0) {
-            throw new InvalidCommunityDataException("Invalid zone ID.");
+            throw new InvalidCommunityDataException('Invalid zone ID.');
         }
         $this->zoneId = $zoneId;
     }

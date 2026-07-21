@@ -13,7 +13,7 @@ class CommunityTest extends TestCase
     public function test_can_instantiate_community()
     {
         $community = new Community(1, new Name('St. Joseph'), 2);
-        
+
         $this->assertEquals(1, $community->getId());
         $this->assertEquals('St. Joseph', $community->getName());
         $this->assertEquals(2, $community->getZoneId());
@@ -30,12 +30,12 @@ class CommunityTest extends TestCase
         $this->expectException(InvalidCommunityDataException::class);
         new Community(1, new Name('St. Joseph'), 0);
     }
-    
+
     public function test_to_array_returns_expected_structure()
     {
         $community = new Community(1, new Name('St. Joseph'), 2);
         $array = $community->toArray();
-        
+
         $this->assertEquals([
             'id' => 1,
             'name' => 'St. Joseph',

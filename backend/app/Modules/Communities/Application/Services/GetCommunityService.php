@@ -16,8 +16,8 @@ class GetCommunityService
     {
         $community = $this->repository->findById($id);
 
-        if (!$community) {
-            throw new CommunityNotFoundException("Community not found.");
+        if (! $community) {
+            throw new CommunityNotFoundException('Community not found.');
         }
 
         return $community;

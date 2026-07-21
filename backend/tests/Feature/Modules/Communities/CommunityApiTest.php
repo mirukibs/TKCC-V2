@@ -28,9 +28,9 @@ class CommunityApiTest extends TestCase
         $response = $this->getJson('/api/communities');
 
         $response->assertStatus(200)
-                 ->assertJsonCount(2, 'data')
-                 ->assertJsonFragment(['name' => 'St. Peter'])
-                 ->assertJsonFragment(['name' => 'St. Paul']);
+            ->assertJsonCount(2, 'data')
+            ->assertJsonFragment(['name' => 'St. Peter'])
+            ->assertJsonFragment(['name' => 'St. Paul']);
     }
 
     public function test_can_create_community()
@@ -43,8 +43,8 @@ class CommunityApiTest extends TestCase
         $response = $this->postJson('/api/communities', $payload);
 
         $response->assertStatus(201)
-                 ->assertJsonFragment(['name' => 'St. Mary', 'zone_id' => 1]);
-                 
+            ->assertJsonFragment(['name' => 'St. Mary', 'zone_id' => 1]);
+
         $this->assertDatabaseHas('communities', ['name' => 'St. Mary']);
     }
 
@@ -58,7 +58,7 @@ class CommunityApiTest extends TestCase
         $response = $this->postJson('/api/communities', $payload);
 
         $response->assertStatus(422)
-                 ->assertJsonValidationErrors(['zone_id']);
+            ->assertJsonValidationErrors(['zone_id']);
     }
 
     public function test_can_show_community()
@@ -68,7 +68,7 @@ class CommunityApiTest extends TestCase
         $response = $this->getJson("/api/communities/{$community->id}");
 
         $response->assertStatus(200)
-                 ->assertJsonFragment(['name' => 'St. Peter']);
+            ->assertJsonFragment(['name' => 'St. Peter']);
     }
 
     public function test_returns_404_for_missing_community()
@@ -89,8 +89,8 @@ class CommunityApiTest extends TestCase
         $response = $this->putJson("/api/communities/{$community->id}", $payload);
 
         $response->assertStatus(200)
-                 ->assertJsonFragment(['name' => 'St. Peter Updated', 'zone_id' => 2]);
-                 
+            ->assertJsonFragment(['name' => 'St. Peter Updated', 'zone_id' => 2]);
+
         $this->assertDatabaseHas('communities', ['name' => 'St. Peter Updated']);
     }
 
@@ -101,7 +101,7 @@ class CommunityApiTest extends TestCase
         $response = $this->deleteJson("/api/communities/{$community->id}");
 
         $response->assertStatus(204);
-        
+
         $this->assertDatabaseMissing('communities', ['id' => $community->id]);
     }
 }

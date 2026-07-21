@@ -20,6 +20,7 @@ class CommunityController extends Controller
     public function index(ListCommunitiesService $service)
     {
         $communities = $service->execute();
+
         return CommunityResource::collection($communities);
     }
 
@@ -39,6 +40,7 @@ class CommunityController extends Controller
     {
         try {
             $community = $service->execute($id);
+
             return new CommunityResource($community);
         } catch (Exception $e) {
             return response()->json(['message' => $e->getMessage()], 404);
@@ -53,6 +55,7 @@ class CommunityController extends Controller
                 $request->validated('zone_id')
             );
             $community = $service->execute($id, $dto);
+
             return new CommunityResource($community);
         } catch (Exception $e) {
             return response()->json(['message' => $e->getMessage()], 404);
@@ -63,6 +66,7 @@ class CommunityController extends Controller
     {
         try {
             $service->execute($id);
+
             return response()->json(null, 204);
         } catch (Exception $e) {
             return response()->json(['message' => $e->getMessage()], 404);

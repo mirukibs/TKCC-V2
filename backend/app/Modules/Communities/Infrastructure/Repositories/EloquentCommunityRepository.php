@@ -17,7 +17,7 @@ class EloquentCommunityRepository implements CommunityRepositoryInterface
     {
         $model = CommunityModel::find($id);
 
-        if (!$model) {
+        if (! $model) {
             return null;
         }
 
@@ -50,6 +50,7 @@ class EloquentCommunityRepository implements CommunityRepositoryInterface
         if ($model) {
             return $model->delete();
         }
+
         return false;
     }
 
