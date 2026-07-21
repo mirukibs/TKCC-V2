@@ -1,0 +1,39 @@
+@startuml
+autonumber
+actor User
+participant "Vue Component\n(CommunityCreate.vue)" as UI
+participant "Axios Client\n(CommunityService.js)" as Client
+participant "Controller\n(CommunityController)" as Controller
+participant "Request\n(RegisterCommunityRequest)" as Request
+participant "DTO\n(RegisterCommunityDTO)" as DTO
+participant "Service\n(RegisterCommunityService)" as Service
+participant "Factory\n(CommunityFactory)" as Factory
+participant "Value Object\n(Name)" as VO
+participant "Domain Entity\n(Community)" as Entity
+participant "Repository\n(EloquentCommunityRepository)" as Repo
+database "SQLite DB" as DB
+
+User -> UI : Fills form and clicks "Save"
+UI -> UI : Validates basic inputs (maxlength=150)
+UI -> Client : create(payload)
+Client -> Controller : POST /api/communities (JSON)
+Controller -> Request : Validate Request (max:150)
+Request --> Controller : Validated Data
+Controller -> DTO : new RegisterCommunityDTO(...)
+DTO --> Controller : Returns DTO instance
+Controller -> Service : execute(dto)
+Service -> Factory : create(dto->toArray())
+Factory -> VO : new Name(name)
+VO --> Factory : Returns Name instance
+Factory -> Entity : new Community(null, nameVO, zone_id)
+Entity --> Factory : Returns Entity
+Factory --> Service : Returns Entity
+Service -> Repo : save(Entity)
+Repo -> DB : INSERT INTO communities...
+DB --> Repo : Success
+Repo --> Service : Returns persisted Entity
+Service --> Controller : Returns persisted Entity
+Controller -> Client : 201 Created (CommunityResource)
+Client --> UI : Resolves Promise
+UI -> User : Shows success & redirects to List
+@enduml

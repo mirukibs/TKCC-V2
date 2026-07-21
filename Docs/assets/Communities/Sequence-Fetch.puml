@@ -1,0 +1,35 @@
+@startuml
+autonumber
+actor User
+participant "Vue Component\n(CommunityDetail.vue)" as UI
+participant "Axios Client\n(CommunityService.js)" as Client
+participant "Controller\n(CommunityController)" as Controller
+participant "Service\n(GetCommunityService)" as Service
+participant "Repository\n(EloquentCommunityRepository)" as Repo
+participant "Factory\n(CommunityFactory)" as Factory
+database "SQLite DB" as DB
+
+User -> UI : Navigates to /communities/:id
+UI -> Client : getById(id)
+Client -> Controller : GET /api/communities/{id}
+Controller -> Service : execute(id)
+Service -> Repo : findById(id)
+Repo -> DB : SELECT * FROM communities WHERE id = ?
+DB --> Repo : Database record (or null)
+
+alt If record not found
+    Repo --> Service : null
+    Service --> Controller : throws CommunityNotFoundException
+    Controller --> Client : 404 Not Found
+    Client --> UI : Throws error
+    UI -> User : Displays "Community not found"
+else If record found
+    Repo -> Factory : reconstitute(id, name, zone_id)
+    Factory --> Repo : Returns Entity
+    Repo --> Service : Community Entity
+    Service --> Controller : Community Entity
+    Controller -> Client : 200 OK (CommunityResource)
+    Client --> UI : Returns JSON data
+    UI -> User : Displays community details
+end
+@enduml

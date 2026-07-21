@@ -1,0 +1,34 @@
+@startuml
+package "Communities Bounded Context" {
+    class Community <<Aggregate Root>> {
+        - id : int|null
+        - name : Name
+        - zoneId : int
+        + __construct(id: int|null, name: Name, zoneId: int)
+        + getId() : int|null
+        + getName() : string
+        + getZoneId() : int
+    }
+
+    class CommunityFactory <<Factory>> {
+        + create(data: array) : Community
+        + reconstitute(id: int, name: string, zoneId: int) : Community
+    }
+}
+
+package "Shared Kernel" {
+    class Name <<Value Object>> {
+        - value : string
+        + __construct(value: string)
+        + getValue() : string
+    }
+
+    class InvalidNameException <<Exception>> {
+    }
+}
+
+Community --> Name : uses
+CommunityFactory --> Community : creates
+CommunityFactory --> Name : instantiates
+Name ..> InvalidNameException : throws
+@enduml

@@ -23,8 +23,13 @@
             </div>
             
             <div class="form-group">
-              <label class="form-label">Community ID *</label>
-              <input type="number" class="form-control" v-model="form.community_id" required>
+              <label class="form-label">Community *</label>
+              <select class="form-control" v-model="form.community_id" required>
+                <option value="" disabled>-- Select Community --</option>
+                <option v-for="community in communities" :key="community.id" :value="community.id">
+                  {{ community.name }}
+                </option>
+              </select>
             </div>
           </div>
 
@@ -63,11 +68,13 @@
 import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import HouseholdService from '../services/HouseholdService';
+import CommunityService from '../../communities/services/CommunityService';
 
 const router = useRouter();
 const route = useRoute();
 const loading = ref(false);
 const householdId = route.params.id;
+const communities = ref([]);
 
 const form = ref({
   name: '',
@@ -90,6 +97,12 @@ onMounted(async () => {
     }
   } catch (error) {
     console.error('Failed to load household', error);
+  }
+
+  try {
+    communities.value = await CommunityService.getAll();
+  } catch (error) {
+    console.error('Failed to load communities', error);
   }
 });
 
