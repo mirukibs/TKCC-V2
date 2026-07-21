@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount, flushPromises } from '@vue/test-utils';
 import HouseholdEdit from '@/modules/households/views/HouseholdEdit.vue';
 import HouseholdService from '@/modules/households/services/HouseholdService';
+import CommunityService from '@/modules/communities/services/CommunityService';
 
 const RouterLink = { template: '<a><slot></slot></a>' };
 
@@ -21,6 +22,12 @@ vi.mock('@/modules/households/services/HouseholdService', () => ({
     }
 }));
 
+vi.mock('@/modules/communities/services/CommunityService', () => ({
+    default: {
+        getAll: vi.fn()
+    }
+}));
+
 describe('HouseholdEdit.vue', () => {
     beforeEach(() => {
         vi.clearAllMocks();
@@ -35,6 +42,9 @@ describe('HouseholdEdit.vue', () => {
                 ownership: 'owner'
             }
         });
+        CommunityService.getAll.mockResolvedValue([
+            { id: 1, name: 'Test Community' }
+        ]);
     });
 
     it('renders the form and populates data', async () => {
@@ -47,12 +57,13 @@ describe('HouseholdEdit.vue', () => {
         expect(wrapper.text()).toContain('Edit Household');
         
         const inputs = wrapper.findAll('input');
+        const selects = wrapper.findAll('select');
         expect(inputs[0].element.value).toBe('The Doe Family'); // name
-        expect(inputs[1].element.value).toBe('1'); // community_id
-        expect(inputs[2].element.value).toBe('2'); // leader_id
+        expect(selects[0].element.value).toBe('1'); // community_id
+        expect(inputs[1].element.value).toBe('2'); // leader_id
         
-        const select = wrapper.find('select');
-        expect(select.element.value).toBe('owner'); // ownership
+        const ownershipSelect = selects[1];
+        expect(ownershipSelect.element.value).toBe('owner'); // ownership
     });
 
     it('submits updated payload and redirects on success', async () => {
@@ -67,7 +78,7 @@ describe('HouseholdEdit.vue', () => {
         // Update name
         await wrapper.findAll('input')[0].setValue('The Updated Family');
         // Clear leader ID
-        await wrapper.findAll('input')[2].setValue('');
+        await wrapper.findAll('input')[1].setValue('');
 
         await wrapper.find('form').trigger('submit.prevent');
         await flushPromises();

@@ -19,9 +19,14 @@ class HouseholdRepositoryTest extends TestCase
         parent::setUp();
         $this->repository = new EloquentHouseholdRepository;
 
+        DB::table('zones')->insert([
+            ['id' => 1, 'name' => 'Zone 1'],
+            ['id' => 2, 'name' => 'Zone 2'],
+        ]);
+
         DB::table('communities')->insert([
-            ['id' => 10, 'name' => 'Community 10'],
-            ['id' => 20, 'name' => 'Community 20'],
+            ['id' => 10, 'name' => 'Community 10', 'zone_id' => 1],
+            ['id' => 20, 'name' => 'Community 20', 'zone_id' => 2],
         ]);
     }
 

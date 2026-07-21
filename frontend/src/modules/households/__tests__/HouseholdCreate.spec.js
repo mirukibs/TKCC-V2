@@ -3,7 +3,12 @@ import { mount, flushPromises } from '@vue/test-utils'
 import HouseholdCreate from '../views/HouseholdCreate.vue'
 import HouseholdService from '../services/HouseholdService'
 import MemberService from '../../members/services/MemberService'
+import CommunityService from '../../communities/services/CommunityService'
 import { createRouter, createWebHistory } from 'vue-router'
+
+vi.mock('../services/HouseholdService')
+vi.mock('../../members/services/MemberService')
+vi.mock('../../communities/services/CommunityService')
 
 const router = createRouter({
   history: createWebHistory(),
@@ -18,6 +23,7 @@ describe('HouseholdCreate.vue', () => {
     vi.spyOn(MemberService, 'getMembers').mockResolvedValue({
       data: [{ id: 1, first_name: 'John', last_name: 'Doe' }]
     })
+    vi.spyOn(CommunityService, 'getAll').mockResolvedValue([{ id: 1, name: 'Test Community' }])
   })
 
   it('renders form inputs', async () => {
@@ -28,7 +34,7 @@ describe('HouseholdCreate.vue', () => {
     await flushPromises()
 
     expect(wrapper.find('input#name').exists()).toBe(true)
-    expect(wrapper.find('input#community_id').exists()).toBe(true)
+    expect(wrapper.find('select#community_id').exists()).toBe(true)
     expect(wrapper.find('select#leader_id').exists()).toBe(true)
     expect(wrapper.find('select#ownership').exists()).toBe(true)
     
@@ -46,7 +52,7 @@ describe('HouseholdCreate.vue', () => {
     await flushPromises()
 
     await wrapper.find('input#name').setValue('The Adams Family')
-    await wrapper.find('input#community_id').setValue('1')
+    await wrapper.find('select#community_id').setValue('1')
     await wrapper.find('select#leader_id').setValue('1')
     await wrapper.find('select#ownership').setValue('owned')
 
@@ -83,7 +89,7 @@ describe('HouseholdCreate.vue', () => {
     await flushPromises()
 
     await wrapper.find('input#name').setValue('The Adams Family')
-    await wrapper.find('input#community_id').setValue('1')
+    await wrapper.find('select#community_id').setValue('1')
     await wrapper.find('select#leader_id').setValue('')
 
     await wrapper.find('form').trigger('submit.prevent')
@@ -104,7 +110,7 @@ describe('HouseholdCreate.vue', () => {
     await flushPromises()
 
     await wrapper.find('input#name').setValue('The Adams Family')
-    await wrapper.find('input#community_id').setValue('1')
+    await wrapper.find('select#community_id').setValue('1')
     await wrapper.find('form').trigger('submit.prevent')
 
     await flushPromises()

@@ -11,9 +11,17 @@ class HouseholdApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        DB::table('zones')->insert([
+            ['id' => 1, 'name' => 'Zone 1'],
+        ]);
+    }
+
     public function test_can_list_households()
     {
-        DB::table('communities')->insert(['id' => 1, 'name' => 'Test Community']);
+        DB::table('communities')->insert(['id' => 1, 'name' => 'Test Community', 'zone_id' => 1]);
 
         HouseholdModel::create([
             'name' => 'The Doe Family',
@@ -31,7 +39,7 @@ class HouseholdApiTest extends TestCase
 
     public function test_can_create_household()
     {
-        DB::table('communities')->insert(['id' => 1, 'name' => 'Test Community']);
+        DB::table('communities')->insert(['id' => 1, 'name' => 'Test Community', 'zone_id' => 1]);
 
         $data = [
             'name' => 'The Smith Family',
@@ -66,7 +74,7 @@ class HouseholdApiTest extends TestCase
 
     public function test_can_show_household()
     {
-        DB::table('communities')->insert(['id' => 2, 'name' => 'Test Community 2']);
+        DB::table('communities')->insert(['id' => 2, 'name' => 'Test Community 2', 'zone_id' => 1]);
 
         $household = HouseholdModel::create([
             'name' => 'The Johnson Family',
@@ -90,7 +98,7 @@ class HouseholdApiTest extends TestCase
 
     public function test_can_update_household()
     {
-        DB::table('communities')->insert(['id' => 3, 'name' => 'Test Community 3']);
+        DB::table('communities')->insert(['id' => 3, 'name' => 'Test Community 3', 'zone_id' => 1]);
 
         $household = HouseholdModel::create([
             'name' => 'The Old Name',
@@ -119,7 +127,7 @@ class HouseholdApiTest extends TestCase
 
     public function test_cannot_update_household_with_invalid_data()
     {
-        DB::table('communities')->insert(['id' => 4, 'name' => 'Test Community 4']);
+        DB::table('communities')->insert(['id' => 4, 'name' => 'Test Community 4', 'zone_id' => 1]);
 
         $household = HouseholdModel::create([
             'name' => 'The Old Name',
@@ -142,7 +150,7 @@ class HouseholdApiTest extends TestCase
 
     public function test_can_delete_household()
     {
-        DB::table('communities')->insert(['id' => 5, 'name' => 'Test Community 5']);
+        DB::table('communities')->insert(['id' => 5, 'name' => 'Test Community 5', 'zone_id' => 1]);
 
         $household = HouseholdModel::create([
             'name' => 'To Delete',

@@ -19,8 +19,13 @@
             </div>
 
             <div class="form-group">
-              <label for="community_id" class="form-label">Community ID <span class="text-danger">*</span></label>
-              <input type="number" id="community_id" class="form-control" v-model="formData.community_id" required placeholder="e.g. 1" />
+              <label for="community_id" class="form-label">Community <span class="text-danger">*</span></label>
+              <select id="community_id" class="form-control" v-model="formData.community_id" required>
+                <option value="" disabled>-- Select Community --</option>
+                <option v-for="community in communities" :key="community.id" :value="community.id">
+                  {{ community.name }}
+                </option>
+              </select>
             </div>
 
             <div class="form-group">
@@ -59,10 +64,12 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import HouseholdService from '../services/HouseholdService';
 import MemberService from '../../members/services/MemberService';
+import CommunityService from '../../communities/services/CommunityService';
 
 const router = useRouter();
 const isSubmitting = ref(false);
 const members = ref([]);
+const communities = ref([]);
 
 const formData = ref({
   name: '',
@@ -77,6 +84,14 @@ const fetchMembers = async () => {
     members.value = response.data || response || [];
   } catch (error) {
     console.error('Failed to fetch members for dropdown:', error);
+  }
+};
+
+const fetchCommunities = async () => {
+  try {
+    communities.value = await CommunityService.getAll();
+  } catch (error) {
+    console.error('Failed to fetch communities for dropdown:', error);
   }
 };
 
@@ -100,6 +115,7 @@ const submitForm = async () => {
 
 onMounted(() => {
   fetchMembers();
+  fetchCommunities();
 });
 </script>
 
