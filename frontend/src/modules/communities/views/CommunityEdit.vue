@@ -26,7 +26,7 @@
               <select id="zone_id" class="form-control" v-model="form.zone_id" required>
                 <option value="" disabled>Select a zone</option>
                 <option v-for="zone in zones" :key="zone.id" :value="zone.id">
-                  {{ zone.name }} (ID: {{ zone.id }})
+                  {{ zone.name }}
                 </option>
               </select>
               <div v-if="fetchingZones" class="text-xs text-muted mt-1">Loading zones...</div>

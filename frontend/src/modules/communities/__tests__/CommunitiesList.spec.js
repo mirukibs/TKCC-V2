@@ -6,6 +6,11 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 // Mock the service
 vi.mock('../services/CommunityService');
+vi.mock('../../zones/services/ZoneService', () => ({
+  default: {
+    getAll: vi.fn().mockResolvedValue([{ id: 1, name: 'Zone A' }, { id: 2, name: 'Zone B' }])
+  }
+}));
 
 const router = createRouter({
   history: createWebHistory(),

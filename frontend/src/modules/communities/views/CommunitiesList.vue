@@ -23,7 +23,7 @@
           <thead>
             <tr>
               <th>Name</th>
-              <th>Zone ID</th>
+              <th>Zone</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -42,12 +42,11 @@
                   </div>
                   <div>
                     <div class="font-medium">{{ community.name }}</div>
-                    <div class="text-xs text-muted">ID: #{{ community.id }}</div>
                   </div>
                 </div>
               </td>
               <td>
-                <div class="text-sm">Zone {{ community.zone_id }}</div>
+                <div class="text-sm">{{ getZoneName(community.zone_id) }}</div>
               </td>
               <td>
                 <div class="flex gap-2">
@@ -70,8 +69,10 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
 import CommunityService from '../services/CommunityService';
+import ZoneService from '../../zones/services/ZoneService';
 
 const communities = ref([]);
+const zones = ref([]);
 const loading = ref(true);
 const searchQuery = ref('');
 let debounceTimeout = null;
@@ -82,8 +83,12 @@ const fetchCommunities = async () => {
     const params = {};
     if (searchQuery.value) params.search = searchQuery.value;
     
-    const response = await CommunityService.getAll(); // Assuming API doesn't fully support search yet, or we fetch all
-    communities.value = response?.data ?? response ?? [];
+    const [communityResponse, zoneResponse] = await Promise.all([
+      CommunityService.getAll(),
+      ZoneService.getAll()
+    ]);
+    communities.value = communityResponse?.data ?? communityResponse ?? [];
+    zones.value = zoneResponse?.data ?? zoneResponse ?? [];
   } catch (error) {
     console.error('Failed to fetch communities:', error);
     communities.value = [];
@@ -108,6 +113,11 @@ const filteredCommunities = computed(() => {
   const q = searchQuery.value.toLowerCase();
   return communities.value.filter(c => c.name && c.name.toLowerCase().includes(q));
 });
+
+const getZoneName = (zoneId) => {
+  const zone = zones.value.find(z => z.id === zoneId);
+  return zone ? zone.name : 'Unknown Zone';
+};
 </script>
 
 <style scoped>
