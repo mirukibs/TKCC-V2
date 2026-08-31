@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import membersRoutes from '../modules/members/router';
 import householdsRoutes from '../modules/households/router';
 import communitiesRoutes from '../modules/communities/router';
+import zonesRoutes from '../modules/zones/router';
 
 const routes = [
     {
@@ -11,7 +12,8 @@ const routes = [
     },
     ...membersRoutes,
     ...householdsRoutes,
-    ...communitiesRoutes
+    ...communitiesRoutes,
+    ...zonesRoutes
 ];
 
 const router = createRouter({
