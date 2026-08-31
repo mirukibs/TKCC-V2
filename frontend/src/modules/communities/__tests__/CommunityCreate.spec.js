@@ -2,12 +2,20 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount, flushPromises } from '@vue/test-utils';
 import CommunityCreate from '../views/CommunityCreate.vue';
 import CommunityService from '../services/CommunityService';
+import ZoneService from '../../zones/services/ZoneService';
+import { createRouter, createWebHistory } from 'vue-router';
 
 vi.mock('../services/CommunityService');
+vi.mock('../../zones/services/ZoneService');
 
-const mockRouter = {
-  push: vi.fn()
-};
+const router = createRouter({
+  history: createWebHistory(),
+  routes: [
+    { path: '/', component: CommunityCreate },
+    { path: '/communities', component: CommunityCreate },
+    { path: '/communities/create', component: CommunityCreate }
+  ],
+});
 
 describe('CommunityCreate.vue', () => {
   beforeEach(() => {
@@ -16,15 +24,11 @@ describe('CommunityCreate.vue', () => {
 
   it('submits form data to service', async () => {
     CommunityService.create.mockResolvedValue({ data: { id: 1, name: 'Test', zone_id: 2 } });
+    ZoneService.getAll.mockResolvedValue({ data: [{ id: 2, name: 'Zone 2' }] });
 
     const wrapper = mount(CommunityCreate, {
       global: {
-        mocks: {
-          $router: mockRouter
-        },
-        provide: {
-          router: mockRouter // For vue-router 4 useRouter hook mock
-        }
+        plugins: [router]
       }
     });
 
@@ -32,14 +36,15 @@ describe('CommunityCreate.vue', () => {
     // Note: setting up a full router is usually better for setup() components using useRouter.
   });
 
-  it('enforces maxlength of 150 on the name input', () => {
+  it('enforces maxlength of 150 on the name input', async () => {
+    ZoneService.getAll.mockResolvedValue({ data: [{ id: 2, name: 'Zone 2' }] });
     const wrapper = mount(CommunityCreate, {
       global: {
-        mocks: { $router: mockRouter },
-        provide: { router: mockRouter }
+        plugins: [router]
       }
     });
 
+    await flushPromises();
     const nameInput = wrapper.find('#name');
     expect(nameInput.attributes('maxlength')).toBe('150');
   });

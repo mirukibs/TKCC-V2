@@ -2,9 +2,11 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount, flushPromises } from '@vue/test-utils';
 import CommunityEdit from '../views/CommunityEdit.vue';
 import CommunityService from '../services/CommunityService';
+import ZoneService from '../../zones/services/ZoneService';
 import { createRouter, createWebHistory } from 'vue-router';
 
 vi.mock('../services/CommunityService');
+vi.mock('../../zones/services/ZoneService');
 
 const router = createRouter({
   history: createWebHistory(),
@@ -20,6 +22,7 @@ describe('CommunityEdit.vue', () => {
     const mockData = { id: 1, name: 'Edit Me', zone_id: 3 };
     CommunityService.getById.mockResolvedValue(mockData);
     CommunityService.update.mockResolvedValue({ data: mockData });
+    ZoneService.getAll.mockResolvedValue({ data: [{ id: 3, name: 'Zone 3' }] });
 
     const wrapper = mount(CommunityEdit, {
       props: { id: '1' },
@@ -40,6 +43,7 @@ describe('CommunityEdit.vue', () => {
 
   it('enforces maxlength of 150 on the name input', async () => {
     CommunityService.getById.mockResolvedValue({ id: 1, name: 'Edit Me', zone_id: 3 });
+    ZoneService.getAll.mockResolvedValue({ data: [{ id: 3, name: 'Zone 3' }] });
     const wrapper = mount(CommunityEdit, {
       props: { id: '1' },
       global: { plugins: [router] }

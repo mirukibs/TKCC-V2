@@ -9,7 +9,13 @@ vi.mock('../services/CommunityService');
 
 const router = createRouter({
   history: createWebHistory(),
-  routes: [{ path: '/communities', component: CommunitiesList }],
+  routes: [
+    { path: '/', component: CommunitiesList },
+    { path: '/communities', component: CommunitiesList },
+    { path: '/communities/create', component: CommunitiesList },
+    { path: '/communities/:id', component: CommunitiesList },
+    { path: '/communities/:id/edit', component: CommunitiesList }
+  ],
 });
 
 describe('CommunitiesList.vue', () => {
