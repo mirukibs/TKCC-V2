@@ -25,6 +25,8 @@ describe('CommunityCreate.vue', () => {
   it('submits form data to service', async () => {
     CommunityService.create.mockResolvedValue({ data: { id: 1, name: 'Test', zone_id: 2 } });
     ZoneService.getAll.mockResolvedValue({ data: [{ id: 2, name: 'Zone 2' }] });
+    router.push('/communities/create');
+    await router.isReady();
 
     const wrapper = mount(CommunityCreate, {
       global: {
@@ -32,8 +34,16 @@ describe('CommunityCreate.vue', () => {
       }
     });
 
-    // We can directly mock useRouter if needed, but let's test if we can trigger submit
-    // Note: setting up a full router is usually better for setup() components using useRouter.
+    await flushPromises();
+
+    await wrapper.find('#name').setValue('Test Community');
+    await wrapper.find('#zone_id').setValue('2');
+    
+    await wrapper.find('form').trigger('submit.prevent');
+    await flushPromises();
+
+    expect(CommunityService.create).toHaveBeenCalledWith({ name: 'Test Community', zone_id: 2 });
+    expect(router.currentRoute.value.path).toBe('/communities');
   });
 
   it('enforces maxlength of 150 on the name input', async () => {
@@ -47,5 +57,38 @@ describe('CommunityCreate.vue', () => {
     await flushPromises();
     const nameInput = wrapper.find('#name');
     expect(nameInput.attributes('maxlength')).toBe('150');
+  });
+
+  it('handles zone fetching error', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    ZoneService.getAll.mockRejectedValue(new Error('Network error'));
+
+    const wrapper = mount(CommunityCreate, {
+      global: { plugins: [router] }
+    });
+
+    await flushPromises();
+    expect(console.error).toHaveBeenCalled();
+  });
+
+  it('handles creation error', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    ZoneService.getAll.mockResolvedValue({ data: [{ id: 2, name: 'Zone 2' }] });
+    CommunityService.create.mockRejectedValue(new Error('API Error'));
+
+    const wrapper = mount(CommunityCreate, {
+      global: { plugins: [router] }
+    });
+
+    await flushPromises();
+    
+    await wrapper.find('#name').setValue('Test Community');
+    await wrapper.find('#zone_id').setValue(2);
+    await wrapper.find('form').trigger('submit.prevent');
+    
+    await flushPromises();
+
+    expect(console.error).toHaveBeenCalled();
+    expect(wrapper.text()).toContain('Failed to create community. Please check the inputs.');
   });
 });

@@ -35,4 +35,35 @@ describe('CommunityDetail.vue', () => {
     expect(wrapper.text()).toContain('Detail View');
     expect(wrapper.text()).toContain('Test Zone 3');
   });
+
+  it('handles zone fetch error gracefully', async () => {
+    const mockData = { id: 1, name: 'Detail View', zone_id: 3 };
+    CommunityService.getById.mockResolvedValue(mockData);
+    vi.spyOn(ZoneService, 'getById').mockRejectedValue(new Error('Network error'));
+
+    const wrapper = mount(CommunityDetail, {
+      props: { id: '1' },
+      global: { plugins: [router] }
+    });
+    
+    await flushPromises();
+
+    expect(wrapper.text()).toContain('Detail View');
+    expect(wrapper.text()).toContain('Unknown Zone');
+  });
+
+  it('handles community fetch error', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    CommunityService.getById.mockRejectedValue(new Error('API error'));
+
+    const wrapper = mount(CommunityDetail, {
+      props: { id: '1' },
+      global: { plugins: [router] }
+    });
+    
+    await flushPromises();
+
+    expect(wrapper.text()).toContain('Failed to load community details.');
+    expect(console.error).toHaveBeenCalled();
+  });
 });
