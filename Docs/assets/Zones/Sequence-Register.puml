@@ -1,0 +1,39 @@
+@startuml
+autonumber
+actor User
+participant "Vue Component\n(ZoneCreate.vue)" as UI
+participant "Axios Client\n(ZoneService.js)" as Client
+participant "Controller\n(ZoneController)" as Controller
+participant "Request\n(RegisterZoneRequest)" as Request
+participant "DTO\n(RegisterZoneDTO)" as DTO
+participant "Service\n(RegisterZoneService)" as Service
+participant "Factory\n(ZoneFactory)" as Factory
+participant "Value Object\n(Name)" as VO
+participant "Domain Entity\n(Zone)" as Entity
+participant "Repository\n(EloquentZoneRepository)" as Repo
+database "SQLite DB" as DB
+
+User -> UI : Fills form and clicks "Save"
+UI -> UI : Validates basic inputs (maxlength=150)
+UI -> Client : create(payload)
+Client -> Controller : POST /api/zones (JSON)
+Controller -> Request : Validate Request (max:150)
+Request --> Controller : Validated Data
+Controller -> DTO : new RegisterZoneDTO(...)
+DTO --> Controller : Returns DTO instance
+Controller -> Service : execute(dto)
+Service -> Factory : create(dto->toArray())
+Factory -> VO : new Name(name)
+VO --> Factory : Returns Name instance
+Factory -> Entity : new Zone(null, nameVO)
+Entity --> Factory : Returns Entity
+Factory --> Service : Returns Entity
+Service -> Repo : save(Entity)
+Repo -> DB : INSERT INTO zones...
+DB --> Repo : Success
+Repo --> Service : Returns persisted Entity
+Service --> Controller : Returns persisted Entity
+Controller -> Client : 201 Created (ZoneResource)
+Client --> UI : Resolves Promise
+UI -> User : Shows success & redirects to List
+@enduml

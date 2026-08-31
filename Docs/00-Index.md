@@ -27,5 +27,11 @@ Manages the regional community groupings within zones. Allows defining administr
 - Use Cases
 - Sequence & Flow Diagrams
 
+### [Zones Module](./Zones.md)
+Manages the top-level regional groupings in the system. Contains multiple communities.
+- Domain Layer
+- Use Cases
+- Sequence & Flow Diagrams
+
 ---
-*Generated after Sprint 2: Members, Households, and Communities Bounded Contexts*
+*Generated after Sprint 2: Members, Households, Communities, and Zones Bounded Contexts*

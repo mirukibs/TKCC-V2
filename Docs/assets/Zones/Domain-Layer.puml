@@ -1,0 +1,32 @@
+@startuml
+package "Zones Bounded Context" {
+    class Zone <<Aggregate Root>> {
+        - id : int|null
+        - name : Name
+        + __construct(id: int|null, name: Name)
+        + getId() : int|null
+        + getName() : string
+    }
+
+    class ZoneFactory <<Factory>> {
+        + create(data: array) : Zone
+        + reconstitute(id: int, name: string) : Zone
+    }
+}
+
+package "Shared Kernel" {
+    class Name <<Value Object>> {
+        - value : string
+        + __construct(value: string)
+        + getValue() : string
+    }
+
+    class InvalidNameException <<Exception>> {
+    }
+}
+
+Zone --> Name : uses
+ZoneFactory --> Zone : creates
+ZoneFactory --> Name : instantiates
+Name ..> InvalidNameException : throws
+@enduml

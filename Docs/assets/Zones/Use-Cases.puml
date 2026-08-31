@@ -1,0 +1,18 @@
+@startuml
+left to right direction
+actor "Administrator" as Admin
+
+package "Zones Module" {
+  usecase "Register Zone" as UC1
+  usecase "Update Zone" as UC2
+  usecase "View Zone" as UC3
+  usecase "List Zones" as UC4
+  usecase "Delete Zone" as UC5
+}
+
+Admin --> UC1
+Admin --> UC2
+Admin --> UC3
+Admin --> UC4
+Admin --> UC5
+@enduml
