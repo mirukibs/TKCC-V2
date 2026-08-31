@@ -106,7 +106,7 @@
             <select class="form-control" v-model="form.household_id">
               <option value="">No Household</option>
               <option v-for="household in households" :key="household.id" :value="household.id">
-                {{ household.name }} ({{ household.community_id }})
+                {{ household.name }}
               </option>
             </select>
           </div>

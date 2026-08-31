@@ -74,11 +74,11 @@
             <div class="detail-value">{{ member.position || 'Standard Member' }}</div>
           </div>
           <div class="detail-item">
-            <div class="detail-label">Household ID</div>
+            <div class="detail-label">Household</div>
             <div class="detail-value">
-              <span v-if="member.household_id" class="text-primary hover:underline cursor-pointer">
-                #{{ member.household_id }}
-              </span>
+              <router-link v-if="member.household_id" :to="`/households/${member.household_id}`" class="text-primary hover:underline cursor-pointer">
+                {{ householdName || 'Loading...' }}
+              </router-link>
               <span v-else class="text-muted">None Assigned</span>
             </div>
           </div>
@@ -103,21 +103,36 @@
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import MemberService from '../services/MemberService';
+import HouseholdService from '../../households/services/HouseholdService';
 
 const route = useRoute();
 const member = ref(null);
+const householdName = ref('');
 const loading = ref(true);
 
 onMounted(async () => {
   try {
     const data = await MemberService.getMember(route.params.id);
     member.value = data.data || data;
+    
+    if (member.value && member.value.household_id) {
+      fetchHousehold(member.value.household_id);
+    }
   } catch (error) {
     console.error("Failed to load member details", error);
   } finally {
     loading.value = false;
   }
 });
+
+const fetchHousehold = async (id) => {
+  try {
+    const data = await HouseholdService.getHousehold(id);
+    householdName.value = data?.data?.name ?? data?.name ?? 'Unknown Household';
+  } catch (error) {
+    householdName.value = 'Unknown Household';
+  }
+};
 
 const getInitials = (name) => {
   if (!name) return '??';

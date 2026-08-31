@@ -17,9 +17,18 @@ vi.mock('@/modules/members/services/MemberService', () => ({
     }
 }));
 
+vi.mock('@/modules/households/services/HouseholdService', () => ({
+    default: {
+        getHousehold: vi.fn()
+    }
+}));
+
+import HouseholdService from '@/modules/households/services/HouseholdService';
+
 describe('MemberDetail.vue', () => {
     beforeEach(() => {
         vi.clearAllMocks();
+        HouseholdService.getHousehold.mockResolvedValue({ data: { name: 'The Doe Family' } });
     });
 
     it('shows loading state initially', () => {
@@ -67,7 +76,10 @@ describe('MemberDetail.vue', () => {
         expect(wrapper.text()).toContain('1990-01-01');
         expect(wrapper.text()).toContain('male');
         expect(wrapper.text()).toContain('Software Engineer');
-        expect(wrapper.text()).toContain('#42'); // household ID
+        
+        // Assert household lookup
+        expect(HouseholdService.getHousehold).toHaveBeenCalledWith(42);
+        expect(wrapper.text()).toContain('The Doe Family');
     });
 
     it('handles missing data gracefully', async () => {
