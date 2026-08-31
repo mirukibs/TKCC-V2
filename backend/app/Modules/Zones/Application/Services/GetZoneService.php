@@ -14,7 +14,7 @@ class GetZoneService
     {
         $zone = $this->repository->findById($id);
 
-        if (!$zone) {
+        if (! $zone) {
             throw new ZoneNotFoundException("Zone with ID {$id} not found.");
         }
 

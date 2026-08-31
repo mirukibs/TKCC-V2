@@ -7,6 +7,7 @@ use App\Modules\SharedKernel\Domain\ValueObjects\Name;
 class Zone
 {
     private ?int $id;
+
     private Name $name;
 
     public function __construct(?int $id, Name $name)

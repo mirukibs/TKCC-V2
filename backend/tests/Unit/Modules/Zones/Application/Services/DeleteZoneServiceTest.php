@@ -2,7 +2,9 @@
 
 namespace Tests\Unit\Modules\Zones\Application\Services;
 
+use App\Modules\SharedKernel\Domain\ValueObjects\Name;
 use App\Modules\Zones\Application\Services\DeleteZoneService;
+use App\Modules\Zones\Domain\Entities\Zone;
 use App\Modules\Zones\Domain\Exceptions\ZoneNotFoundException;
 use App\Modules\Zones\Domain\Repositories\ZoneRepositoryInterface;
 use PHPUnit\Framework\TestCase;
@@ -16,7 +18,7 @@ class DeleteZoneServiceTest extends TestCase
         $repository->expects($this->once())
             ->method('findById')
             ->with(1)
-            ->willReturn(new \App\Modules\Zones\Domain\Entities\Zone(1, new \App\Modules\SharedKernel\Domain\ValueObjects\Name('Zone 1')));
+            ->willReturn(new Zone(1, new Name('Zone 1')));
 
         $repository->expects($this->once())
             ->method('delete')

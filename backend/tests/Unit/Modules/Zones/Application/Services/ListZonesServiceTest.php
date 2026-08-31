@@ -2,11 +2,11 @@
 
 namespace Tests\Unit\Modules\Zones\Application\Services;
 
+use App\Modules\SharedKernel\Domain\ValueObjects\Name;
 use App\Modules\Zones\Application\Services\ListZonesService;
 use App\Modules\Zones\Domain\Entities\Zone;
 use App\Modules\Zones\Domain\Repositories\ZoneRepositoryInterface;
 use PHPUnit\Framework\TestCase;
-use App\Modules\SharedKernel\Domain\ValueObjects\Name;
 
 class ListZonesServiceTest extends TestCase
 {

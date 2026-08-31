@@ -2,10 +2,11 @@
 
 namespace Tests\Unit\Modules\Zones\Infrastructure\Repositories;
 
-use App\Modules\Zones\Domain\Entities\Zone;
-use App\Modules\Zones\Infrastructure\Repositories\EloquentZoneRepository;
-use App\Modules\Zones\Infrastructure\Models\ZoneModel;
 use App\Modules\SharedKernel\Domain\ValueObjects\Name;
+use App\Modules\Zones\Domain\Entities\Zone;
+use App\Modules\Zones\Domain\Factories\ZoneFactory;
+use App\Modules\Zones\Infrastructure\Models\ZoneModel;
+use App\Modules\Zones\Infrastructure\Repositories\EloquentZoneRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -18,31 +19,31 @@ class EloquentZoneRepositoryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $factory = new \App\Modules\Zones\Domain\Factories\ZoneFactory();
+        $factory = new ZoneFactory;
         $this->repository = new EloquentZoneRepository($factory);
     }
 
     public function test_can_save_zone()
     {
         $zone = new Zone(null, new Name('Test Zone'));
-        
+
         $savedZone = $this->repository->save($zone);
-        
+
         $this->assertNotNull($savedZone->getId());
         $this->assertEquals('Test Zone', $savedZone->getName());
-        
+
         $this->assertDatabaseHas('zones', [
             'id' => $savedZone->getId(),
-            'name' => 'Test Zone'
+            'name' => 'Test Zone',
         ]);
     }
 
     public function test_can_find_zone_by_id()
     {
         $model = ZoneModel::create(['name' => 'Existing Zone']);
-        
+
         $foundZone = $this->repository->findById($model->id);
-        
+
         $this->assertNotNull($foundZone);
         $this->assertEquals($model->id, $foundZone->getId());
         $this->assertEquals('Existing Zone', $foundZone->getName());
@@ -58,9 +59,9 @@ class EloquentZoneRepositoryTest extends TestCase
     {
         ZoneModel::create(['name' => 'Zone 1']);
         ZoneModel::create(['name' => 'Zone 2']);
-        
+
         $zones = $this->repository->findAll();
-        
+
         $this->assertCount(2, $zones);
         $this->assertEquals('Zone 1', $zones[0]->getName());
         $this->assertEquals('Zone 2', $zones[1]->getName());
@@ -69,9 +70,9 @@ class EloquentZoneRepositoryTest extends TestCase
     public function test_can_delete_zone()
     {
         $model = ZoneModel::create(['name' => 'To Delete']);
-        
+
         $result = $this->repository->delete($model->id);
-        
+
         $this->assertTrue($result);
         $this->assertDatabaseMissing('zones', ['id' => $model->id]);
     }

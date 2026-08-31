@@ -2,8 +2,8 @@
 
 namespace App\Modules\Zones\Domain\Factories;
 
-use App\Modules\Zones\Domain\Entities\Zone;
 use App\Modules\SharedKernel\Domain\ValueObjects\Name;
+use App\Modules\Zones\Domain\Entities\Zone;
 
 class ZoneFactory
 {

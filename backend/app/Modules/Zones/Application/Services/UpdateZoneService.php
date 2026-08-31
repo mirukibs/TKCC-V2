@@ -19,7 +19,7 @@ class UpdateZoneService
     {
         $zone = $this->repository->findById($dto->id);
 
-        if (!$zone) {
+        if (! $zone) {
             throw new ZoneNotFoundException("Zone with ID {$dto->id} not found.");
         }
 

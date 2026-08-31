@@ -29,6 +29,7 @@ class ZoneController extends Controller
     public function index(): JsonResponse
     {
         $zones = $this->listZonesService->execute();
+
         return response()->json(ZoneResource::collection($zones));
     }
 
@@ -44,6 +45,7 @@ class ZoneController extends Controller
     {
         try {
             $zone = $this->getZoneService->execute($id);
+
             return response()->json(new ZoneResource($zone));
         } catch (ZoneNotFoundException $e) {
             return response()->json(['message' => $e->getMessage()], 404);
@@ -55,6 +57,7 @@ class ZoneController extends Controller
         try {
             $dto = new UpdateZoneDTO($id, $request->validated('name'));
             $zone = $this->updateZoneService->execute($dto);
+
             return response()->json(new ZoneResource($zone));
         } catch (ZoneNotFoundException $e) {
             return response()->json(['message' => $e->getMessage()], 404);
@@ -65,6 +68,7 @@ class ZoneController extends Controller
     {
         try {
             $this->deleteZoneService->execute($id);
+
             return response()->json(null, 204);
         } catch (ZoneNotFoundException $e) {
             return response()->json(['message' => $e->getMessage()], 404);

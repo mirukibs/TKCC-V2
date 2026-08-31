@@ -15,7 +15,7 @@ class EloquentZoneRepository implements ZoneRepositoryInterface
     {
         $model = ZoneModel::find($id);
 
-        if (!$model) {
+        if (! $model) {
             return null;
         }
 
@@ -47,6 +47,7 @@ class EloquentZoneRepository implements ZoneRepositoryInterface
         if ($model) {
             return $model->delete();
         }
+
         return false;
     }
 

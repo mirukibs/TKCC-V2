@@ -2,12 +2,13 @@
 
 namespace App\Modules\Zones\Infrastructure\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Modules\Communities\Infrastructure\Models\CommunityModel;
+use Illuminate\Database\Eloquent\Model;
 
 class ZoneModel extends Model
 {
     protected $table = 'zones';
+
     protected $fillable = ['name'];
 
     public function communities()

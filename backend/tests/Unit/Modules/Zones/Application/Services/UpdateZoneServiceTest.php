@@ -2,13 +2,14 @@
 
 namespace Tests\Unit\Modules\Zones\Application\Services;
 
+use App\Modules\SharedKernel\Domain\ValueObjects\Name;
 use App\Modules\Zones\Application\DTOs\UpdateZoneDTO;
 use App\Modules\Zones\Application\Services\UpdateZoneService;
 use App\Modules\Zones\Domain\Entities\Zone;
 use App\Modules\Zones\Domain\Exceptions\ZoneNotFoundException;
+use App\Modules\Zones\Domain\Factories\ZoneFactory;
 use App\Modules\Zones\Domain\Repositories\ZoneRepositoryInterface;
 use PHPUnit\Framework\TestCase;
-use App\Modules\SharedKernel\Domain\ValueObjects\Name;
 
 class UpdateZoneServiceTest extends TestCase
 {
@@ -16,7 +17,7 @@ class UpdateZoneServiceTest extends TestCase
     {
         $repository = $this->createMock(ZoneRepositoryInterface::class);
         $dto = new UpdateZoneDTO(1, 'Updated Zone');
-        
+
         $zone = new Zone(1, new Name('Old Zone'));
         $updatedZone = new Zone(1, new Name('Updated Zone'));
 
@@ -29,7 +30,7 @@ class UpdateZoneServiceTest extends TestCase
             ->method('save')
             ->willReturn($updatedZone);
 
-        $factory = new \App\Modules\Zones\Domain\Factories\ZoneFactory();
+        $factory = new ZoneFactory;
         $service = new UpdateZoneService($repository, $factory);
         $result = $service->execute($dto);
 
@@ -46,7 +47,7 @@ class UpdateZoneServiceTest extends TestCase
             ->with(99)
             ->willReturn(null);
 
-        $factory = new \App\Modules\Zones\Domain\Factories\ZoneFactory();
+        $factory = new ZoneFactory;
         $service = new UpdateZoneService($repository, $factory);
 
         $this->expectException(ZoneNotFoundException::class);

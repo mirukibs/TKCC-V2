@@ -6,7 +6,7 @@ use Exception;
 
 class ZoneNotFoundException extends Exception
 {
-    public function __construct(string $message = "Zone not found.")
+    public function __construct(string $message = 'Zone not found.')
     {
         parent::__construct($message, 404);
     }

@@ -1,8 +1,8 @@
 <?php
 
-use App\Modules\Members\Presentation\Controllers\MemberController;
-use App\Modules\Households\Presentation\Controllers\HouseholdController;
 use App\Modules\Communities\Presentation\Controllers\CommunityController;
+use App\Modules\Households\Presentation\Controllers\HouseholdController;
+use App\Modules\Members\Presentation\Controllers\MemberController;
 use App\Modules\Zones\Presentation\Controllers\ZoneController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;

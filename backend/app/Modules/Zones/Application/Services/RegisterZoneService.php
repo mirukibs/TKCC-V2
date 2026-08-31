@@ -17,6 +17,7 @@ class RegisterZoneService
     public function execute(RegisterZoneDTO $dto): Zone
     {
         $zone = $this->factory->create($dto->toArray());
+
         return $this->repository->save($zone);
     }
 }
