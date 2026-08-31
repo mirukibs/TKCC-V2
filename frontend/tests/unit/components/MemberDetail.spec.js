@@ -17,18 +17,9 @@ vi.mock('@/modules/members/services/MemberService', () => ({
     }
 }));
 
-vi.mock('@/modules/households/services/HouseholdService', () => ({
-    default: {
-        getHousehold: vi.fn()
-    }
-}));
-
-import HouseholdService from '@/modules/households/services/HouseholdService';
-
 describe('MemberDetail.vue', () => {
     beforeEach(() => {
         vi.clearAllMocks();
-        HouseholdService.getHousehold.mockResolvedValue({ data: { name: 'The Doe Family' } });
     });
 
     it('shows loading state initially', () => {
@@ -51,7 +42,25 @@ describe('MemberDetail.vue', () => {
             employment_status: 'employed',
             position: 'Member',
             employment_notes: 'Software Engineer',
-            household_id: 42
+            household: {
+                id: 42,
+                name: 'The Doe Family'
+            },
+            community: {
+                id: 10,
+                name: 'St. Peter Community'
+            },
+            zone: {
+                id: 2,
+                name: 'North Zone'
+            },
+            sacrament: {
+                baptism_status: 'completed',
+                baptism_date: '2000-01-01',
+                baptism_place: 'St. John',
+                confirmation_status: 'pending',
+                marriage_status: 'none'
+            }
         };
         MemberService.getMember.mockResolvedValueOnce({ data: mockMember });
 
@@ -77,9 +86,19 @@ describe('MemberDetail.vue', () => {
         expect(wrapper.text()).toContain('male');
         expect(wrapper.text()).toContain('Software Engineer');
         
-        // Assert household lookup
-        expect(HouseholdService.getHousehold).toHaveBeenCalledWith(42);
+        // Assert aggregated details (Household, Community, Zone)
         expect(wrapper.text()).toContain('The Doe Family');
+        expect(wrapper.text()).toContain('St. Peter Community');
+        expect(wrapper.text()).toContain('North Zone');
+
+        // Assert sacraments
+        expect(wrapper.text()).toContain('Baptism');
+        expect(wrapper.text()).toContain('completed');
+        expect(wrapper.text()).toContain('2000-01-01 • St. John');
+        expect(wrapper.text()).toContain('Confirmation');
+        expect(wrapper.text()).toContain('pending');
+        expect(wrapper.text()).toContain('Marriage');
+        expect(wrapper.text()).toContain('none');
     });
 
     it('handles missing data gracefully', async () => {
