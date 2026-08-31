@@ -22,8 +22,14 @@
             </div>
 
             <div class="form-group">
-              <label for="zone_id" class="form-label">Zone ID <span class="text-danger">*</span></label>
-              <input type="number" id="zone_id" class="form-control" v-model="form.zone_id" required placeholder="e.g. 1" />
+              <label for="zone_id" class="form-label">Zone <span class="text-danger">*</span></label>
+              <select id="zone_id" class="form-control" v-model="form.zone_id" required>
+                <option value="" disabled>Select a zone</option>
+                <option v-for="zone in zones" :key="zone.id" :value="zone.id">
+                  {{ zone.name }} (ID: {{ zone.id }})
+                </option>
+              </select>
+              <div v-if="fetchingZones" class="text-xs text-muted mt-1">Loading zones...</div>
             </div>
           </div>
 
@@ -45,6 +51,7 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import CommunityService from '../services/CommunityService';
+import ZoneService from '../../zones/services/ZoneService';
 
 const props = defineProps({
   id: {
@@ -56,11 +63,25 @@ const props = defineProps({
 const router = useRouter();
 const form = ref({
   name: '',
-  zone_id: null
+  zone_id: ''
 });
 const loadingInitial = ref(true);
 const loading = ref(false);
 const error = ref(null);
+
+const zones = ref([]);
+const fetchingZones = ref(true);
+
+const fetchZones = async () => {
+  try {
+    const response = await ZoneService.getAll();
+    zones.value = response?.data ?? response ?? [];
+  } catch (e) {
+    console.error('Failed to load zones:', e);
+  } finally {
+    fetchingZones.value = false;
+  }
+};
 
 const fetchCommunity = async () => {
   try {
@@ -89,8 +110,9 @@ const submitForm = async () => {
   }
 };
 
-onMounted(() => {
-  fetchCommunity();
+onMounted(async () => {
+  await fetchZones();
+  await fetchCommunity();
 });
 </script>
 
