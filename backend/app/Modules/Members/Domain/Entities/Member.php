@@ -31,6 +31,8 @@ class Member
 
     private ?int $householdId;
 
+    private array $aggregates = [];
+
     public function __construct(
         ?int $id,
         FullName $name,
@@ -103,5 +105,15 @@ class Member
     public function getHouseholdId(): ?int
     {
         return $this->householdId;
+    }
+
+    public function getAggregates(): array
+    {
+        return $this->aggregates;
+    }
+
+    public function setAggregates(array $aggregates): void
+    {
+        $this->aggregates = $aggregates;
     }
 }

@@ -2,7 +2,21 @@ import { describe, it, expect, vi } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 import HouseholdsList from '../views/HouseholdsList.vue'
 import HouseholdService from '../services/HouseholdService'
+import CommunityService from '../../communities/services/CommunityService'
+import MemberService from '../../members/services/MemberService'
 import { createRouter, createWebHistory } from 'vue-router'
+
+vi.mock('../../communities/services/CommunityService', () => ({
+  default: {
+    getAll: vi.fn()
+  }
+}))
+
+vi.mock('../../members/services/MemberService', () => ({
+  default: {
+    getMembers: vi.fn()
+  }
+}))
 
 const router = createRouter({
   history: createWebHistory(),
@@ -21,6 +35,8 @@ describe('HouseholdsList.vue', () => {
     ]
 
     vi.spyOn(HouseholdService, 'getHouseholds').mockResolvedValue({ data: mockHouseholds })
+    CommunityService.getAll.mockResolvedValue([{ id: 1, name: 'Community A' }, { id: 2, name: 'Community B' }])
+    MemberService.getMembers.mockResolvedValue([{ id: 2, first_name: 'Jane', last_name: 'Leader' }])
 
     const wrapper = mount(HouseholdsList, {
       global: {
@@ -36,11 +52,12 @@ describe('HouseholdsList.vue', () => {
     expect(rows.length).toBe(2)
 
     expect(rows[0].text()).toContain('The Doe Family')
-    expect(rows[0].text()).toContain('1') // Community ID
-    expect(rows[0].text()).toContain('2') // Leader ID
+    expect(rows[0].text()).toContain('Community A') 
+    expect(rows[0].text()).toContain('Jane Leader') 
     
     expect(rows[1].text()).toContain('The Smith Family')
-    expect(rows[1].text()).toContain('N/A') // Leader ID missing
+    expect(rows[1].text()).toContain('Community B')
+    expect(rows[1].text()).toContain('N/A') 
     
     // Check ownership badges
     const badges = wrapper.findAll('.badge')
@@ -66,6 +83,8 @@ describe('HouseholdsList.vue', () => {
   it('triggers a fetch with debounce when searching', async () => {
     vi.useFakeTimers()
     const fetchSpy = vi.spyOn(HouseholdService, 'getHouseholds').mockResolvedValue({ data: [] })
+    CommunityService.getAll.mockResolvedValue([])
+    MemberService.getMembers.mockResolvedValue([])
     
     const wrapper = mount(HouseholdsList, {
       global: { plugins: [router] }
@@ -92,6 +111,8 @@ describe('HouseholdsList.vue', () => {
   it('triggers a fetch with debounce when filtering ownership', async () => {
     vi.useFakeTimers()
     const fetchSpy = vi.spyOn(HouseholdService, 'getHouseholds').mockResolvedValue({ data: [] })
+    CommunityService.getAll.mockResolvedValue([])
+    MemberService.getMembers.mockResolvedValue([])
     
     const wrapper = mount(HouseholdsList, {
       global: { plugins: [router] }
@@ -116,6 +137,8 @@ describe('HouseholdsList.vue', () => {
     vi.spyOn(HouseholdService, 'getHouseholds').mockResolvedValue({ 
       data: [{ id: 1, name: 'Family', ownership: 'unknown_ownership', community_id: 1, leader_id: null }] 
     })
+    CommunityService.getAll.mockResolvedValue([])
+    MemberService.getMembers.mockResolvedValue([])
 
     const wrapper = mount(HouseholdsList, {
       global: { plugins: [router] }

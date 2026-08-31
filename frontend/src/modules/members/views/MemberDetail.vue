@@ -65,6 +65,31 @@
         </div>
       </div>
 
+      <!-- Sacraments -->
+      <div class="card hover-lift">
+        <h3 class="card-title">Sacraments</h3>
+        <div class="detail-list mt-4" v-if="member.sacrament">
+          <div class="detail-item">
+            <div class="detail-label">Baptism</div>
+            <div class="detail-value capitalize">{{ member.sacrament.baptism_status || 'N/A' }}</div>
+            <div class="text-xs text-muted" v-if="member.sacrament.baptism_date">{{ member.sacrament.baptism_date }} • {{ member.sacrament.baptism_place }}</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Confirmation</div>
+            <div class="detail-value capitalize">{{ member.sacrament.confirmation_status || 'N/A' }}</div>
+            <div class="text-xs text-muted" v-if="member.sacrament.confirmation_date">{{ member.sacrament.confirmation_date }} • {{ member.sacrament.confirmation_place }}</div>
+          </div>
+          <div class="detail-item full-width">
+            <div class="detail-label">Marriage</div>
+            <div class="detail-value capitalize">{{ member.sacrament.marriage_status || 'N/A' }}</div>
+            <div class="text-xs text-muted" v-if="member.sacrament.marriage_date">{{ member.sacrament.marriage_date }} • {{ member.sacrament.marriage_place }}</div>
+          </div>
+        </div>
+        <div v-else class="text-muted mt-4 text-center py-4 bg-muted/20 rounded">
+          No sacrament records found.
+        </div>
+      </div>
+
       <!-- Professional & Church Details -->
       <div class="card hover-lift">
         <h3 class="card-title">Professional & Church Life</h3>
@@ -74,12 +99,26 @@
             <div class="detail-value">{{ member.position || 'Standard Member' }}</div>
           </div>
           <div class="detail-item">
-            <div class="detail-label">Household ID</div>
+            <div class="detail-label">Household</div>
             <div class="detail-value">
-              <span v-if="member.household_id" class="text-primary hover:underline cursor-pointer">
-                #{{ member.household_id }}
-              </span>
+              <router-link v-if="member.household" :to="`/households/${member.household.id}`" class="text-primary hover:underline cursor-pointer">
+                {{ member.household.name }}
+              </router-link>
               <span v-else class="text-muted">None Assigned</span>
+            </div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Community</div>
+            <div class="detail-value">
+              <span v-if="member.community">{{ member.community.name }}</span>
+              <span v-else class="text-muted">-</span>
+            </div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Zone</div>
+            <div class="detail-value">
+              <span v-if="member.zone">{{ member.zone.name }}</span>
+              <span v-else class="text-muted">-</span>
             </div>
           </div>
           <div class="detail-item full-width">
@@ -185,6 +224,9 @@ const getStatusBadgeClass = (status) => {
 .capitalize { text-transform: capitalize; }
 .cursor-pointer { cursor: pointer; }
 .hover\:underline:hover { text-decoration: underline; }
+.text-xs { font-size: 0.75rem; line-height: 1rem; }
+.bg-muted\/20 { background-color: rgba(100, 116, 139, 0.1); }
+.rounded { border-radius: 0.375rem; }
 
 .card-title {
   font-size: 1.25rem;

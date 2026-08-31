@@ -1,0 +1,35 @@
+@startuml
+autonumber
+actor User
+participant "Vue Component\n(ZoneDetail.vue)" as UI
+participant "Axios Client\n(ZoneService.js)" as Client
+participant "Controller\n(ZoneController)" as Controller
+participant "Service\n(GetZoneService)" as Service
+participant "Repository\n(EloquentZoneRepository)" as Repo
+participant "Factory\n(ZoneFactory)" as Factory
+database "SQLite DB" as DB
+
+User -> UI : Navigates to /zones/:id
+UI -> Client : getById(id)
+Client -> Controller : GET /api/zones/{id}
+Controller -> Service : execute(id)
+Service -> Repo : findById(id)
+Repo -> DB : SELECT * FROM zones WHERE id = ?
+DB --> Repo : Database record (or null)
+
+alt If record not found
+    Repo --> Service : null
+    Service --> Controller : throws ZoneNotFoundException
+    Controller --> Client : 404 Not Found
+    Client --> UI : Throws error
+    UI -> User : Displays "Zone not found"
+else If record found
+    Repo -> Factory : reconstitute(id, name)
+    Factory --> Repo : Returns Entity
+    Repo --> Service : Zone Entity
+    Service --> Controller : Zone Entity
+    Controller -> Client : 200 OK (ZoneResource)
+    Client --> UI : Returns JSON data
+    UI -> User : Displays zone details
+end
+@enduml

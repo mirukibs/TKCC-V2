@@ -3,6 +3,7 @@ import { mount, flushPromises } from '@vue/test-utils';
 import HouseholdEdit from '@/modules/households/views/HouseholdEdit.vue';
 import HouseholdService from '@/modules/households/services/HouseholdService';
 import CommunityService from '@/modules/communities/services/CommunityService';
+import MemberService from '@/modules/members/services/MemberService';
 
 const RouterLink = { template: '<a><slot></slot></a>' };
 
@@ -28,6 +29,12 @@ vi.mock('@/modules/communities/services/CommunityService', () => ({
     }
 }));
 
+vi.mock('@/modules/members/services/MemberService', () => ({
+    default: {
+        getMembers: vi.fn()
+    }
+}));
+
 describe('HouseholdEdit.vue', () => {
     beforeEach(() => {
         vi.clearAllMocks();
@@ -45,6 +52,9 @@ describe('HouseholdEdit.vue', () => {
         CommunityService.getAll.mockResolvedValue([
             { id: 1, name: 'Test Community' }
         ]);
+        MemberService.getMembers.mockResolvedValue([
+            { id: 2, first_name: 'Leader', last_name: 'Name' }
+        ]);
     });
 
     it('renders the form and populates data', async () => {
@@ -60,9 +70,9 @@ describe('HouseholdEdit.vue', () => {
         const selects = wrapper.findAll('select');
         expect(inputs[0].element.value).toBe('The Doe Family'); // name
         expect(selects[0].element.value).toBe('1'); // community_id
-        expect(inputs[1].element.value).toBe('2'); // leader_id
+        expect(selects[1].element.value).toBe('2'); // leader_id
         
-        const ownershipSelect = selects[1];
+        const ownershipSelect = selects[2];
         expect(ownershipSelect.element.value).toBe('owner'); // ownership
     });
 
@@ -78,7 +88,7 @@ describe('HouseholdEdit.vue', () => {
         // Update name
         await wrapper.findAll('input')[0].setValue('The Updated Family');
         // Clear leader ID
-        await wrapper.findAll('input')[1].setValue('');
+        await wrapper.findAll('select')[1].setValue('');
 
         await wrapper.find('form').trigger('submit.prevent');
         await flushPromises();
@@ -121,8 +131,10 @@ describe('HouseholdEdit.vue', () => {
         await flushPromises();
 
         const inputs = wrapper.findAll('input');
+        const selects = wrapper.findAll('select');
         expect(inputs[0].element.value).toBe('Minimal Family');
-        expect(inputs[1].element.value).toBe(''); // community_id defaulted
+        expect(selects[0].element.value).toBe(''); // community_id defaulted
+        expect(selects[1].element.value).toBe(''); // leader_id defaulted
     });
 
     it('handles error when loading data on mount', async () => {

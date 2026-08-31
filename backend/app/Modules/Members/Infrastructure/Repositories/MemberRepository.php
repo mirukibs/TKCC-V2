@@ -38,7 +38,7 @@ class MemberRepository implements MemberRepositoryInterface
 
     public function findById(int $id): ?Member
     {
-        $model = MemberModel::find($id);
+        $model = MemberModel::with(['sacrament', 'household.community.zone'])->find($id);
 
         if (! $model) {
             return null;
@@ -81,7 +81,7 @@ class MemberRepository implements MemberRepositoryInterface
 
     private function toEntity(MemberModel $model): Member
     {
-        return new Member(
+        $entity = new Member(
             id: $model->id,
             name: new FullName($model->first_name, $model->last_name, $model->middle_name),
             dob: $model->dob ? new DateOfBirth($model->dob) : null,
@@ -93,5 +93,47 @@ class MemberRepository implements MemberRepositoryInterface
             employmentNotes: $model->employment_notes,
             householdId: $model->household_id
         );
+
+        $aggregates = [];
+
+        if ($model->relationLoaded('sacrament') && $model->sacrament) {
+            $aggregates['sacrament'] = [
+                'baptism_status' => $model->sacrament->baptism_status,
+                'baptism_date' => $model->sacrament->baptism_date?->format('Y-m-d'),
+                'baptism_place' => $model->sacrament->baptism_place,
+                'confirmation_status' => $model->sacrament->confirmation_status,
+                'confirmation_date' => $model->sacrament->confirmation_date?->format('Y-m-d'),
+                'confirmation_place' => $model->sacrament->confirmation_place,
+                'marriage_status' => $model->sacrament->marriage_status,
+                'marriage_date' => $model->sacrament->marriage_date?->format('Y-m-d'),
+                'marriage_place' => $model->sacrament->marriage_place,
+            ];
+        }
+
+        if ($model->relationLoaded('household') && $model->household) {
+            $aggregates['household'] = [
+                'id' => $model->household->id,
+                'name' => $model->household->name,
+                'leader_id' => $model->household->leader_id,
+            ];
+
+            if ($model->household->relationLoaded('community') && $model->household->community) {
+                $aggregates['community'] = [
+                    'id' => $model->household->community->id,
+                    'name' => $model->household->community->name,
+                ];
+
+                if ($model->household->community->relationLoaded('zone') && $model->household->community->zone) {
+                    $aggregates['zone'] = [
+                        'id' => $model->household->community->zone->id,
+                        'name' => $model->household->community->zone->name,
+                    ];
+                }
+            }
+        }
+
+        $entity->setAggregates($aggregates);
+
+        return $entity;
     }
 }

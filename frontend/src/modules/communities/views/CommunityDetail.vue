@@ -24,9 +24,7 @@
         <div>
           <h1 class="profile-name">{{ community.name }}</h1>
           <div class="profile-meta flex items-center gap-4 text-muted mt-2">
-            <span class="flex items-center gap-1">
-              Community ID #{{ community.id }}
-            </span>
+            <!-- IDs removed for better UX -->
           </div>
         </div>
       </div>
@@ -39,12 +37,8 @@
         <h3 class="card-title">Community Information</h3>
         <div class="detail-list mt-4">
           <div class="detail-item">
-            <div class="detail-label">Community ID</div>
-            <div class="detail-value">#{{ community.id }}</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">Zone ID</div>
-            <div class="detail-value">{{ community.zone_id }}</div>
+            <div class="detail-label">Zone</div>
+            <div class="detail-value">{{ zoneName || 'Loading...' }}</div>
           </div>
         </div>
       </div>
@@ -65,6 +59,7 @@
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import CommunityService from '../services/CommunityService';
+import ZoneService from '../../zones/services/ZoneService';
 
 const props = defineProps({
   id: {
@@ -76,12 +71,21 @@ const props = defineProps({
 const community = ref(null);
 const loading = ref(true);
 const error = ref(null);
+const zoneName = ref('');
 
 const fetchCommunity = async () => {
   try {
     loading.value = true;
     const data = await CommunityService.getById(props.id);
     community.value = data;
+    if (data && data.zone_id) {
+      try {
+        const zoneData = await ZoneService.getById(data.zone_id);
+        zoneName.value = zoneData.name;
+      } catch (ze) {
+        zoneName.value = 'Unknown Zone';
+      }
+    }
   } catch (e) {
     error.value = 'Failed to load community details.';
     console.error(e);

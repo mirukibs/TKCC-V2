@@ -6,10 +6,21 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 // Mock the service
 vi.mock('../services/CommunityService');
+vi.mock('../../zones/services/ZoneService', () => ({
+  default: {
+    getAll: vi.fn().mockResolvedValue([{ id: 1, name: 'Zone A' }, { id: 2, name: 'Zone B' }])
+  }
+}));
 
 const router = createRouter({
   history: createWebHistory(),
-  routes: [{ path: '/communities', component: CommunitiesList }],
+  routes: [
+    { path: '/', component: CommunitiesList },
+    { path: '/communities', component: CommunitiesList },
+    { path: '/communities/create', component: CommunitiesList },
+    { path: '/communities/:id', component: CommunitiesList },
+    { path: '/communities/:id/edit', component: CommunitiesList }
+  ],
 });
 
 describe('CommunitiesList.vue', () => {
@@ -36,5 +47,48 @@ describe('CommunitiesList.vue', () => {
     expect(wrapper.text()).toContain('Com A');
     expect(wrapper.text()).toContain('Com B');
     expect(wrapper.findAll('tbody tr')).toHaveLength(2);
+  });
+
+  it('filters communities by search query with debounce', async () => {
+    vi.useFakeTimers();
+    const mockCommunities = [
+      { id: 1, name: 'Com A', zone_id: 1 },
+      { id: 2, name: 'Com B', zone_id: 2 }
+    ];
+    CommunityService.getAll.mockResolvedValue(mockCommunities);
+
+    const wrapper = mount(CommunitiesList, {
+      global: { plugins: [router] }
+    });
+
+    await flushPromises();
+
+    // Trigger search
+    const searchInput = wrapper.find('input[type="text"]');
+    await searchInput.setValue('Com A');
+    
+    // Fast forward debounce timer
+    vi.advanceTimersByTime(300);
+    await flushPromises();
+
+    // The fetch request should have been made with search query
+    // In our component it re-fetches, but since it's mocked, we just check if it filters
+    expect(wrapper.text()).toContain('Com A');
+    expect(wrapper.text()).not.toContain('Com B');
+
+    vi.useRealTimers();
+  });
+
+  it('handles API errors gracefully', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    CommunityService.getAll.mockRejectedValue(new Error('API Error'));
+
+    const wrapper = mount(CommunitiesList, {
+      global: { plugins: [router] }
+    });
+
+    await flushPromises();
+    expect(wrapper.text()).toContain('No communities found.');
+    expect(console.error).toHaveBeenCalled();
   });
 });

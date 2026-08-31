@@ -9,11 +9,15 @@ package "Client Side" {
         [Router]
         [Members Module]
         [Households Module]
+        [Communities Module]
+        [Zones Module]
     }
 
     Frontend *-- [Router]
     [Router] --> [Members Module]
     [Router] --> [Households Module]
+    [Router] --> [Communities Module]
+    [Router] --> [Zones Module]
 }
 
 package "Server Side (Laravel 11 API)" {
@@ -26,8 +30,18 @@ package "Server Side (Laravel 11 API)" {
         [HouseholdController]
     }
 
+    package "Module: Communities" {
+        [CommunityController]
+    }
+
+    package "Module: Zones" {
+        [ZoneController]
+    }
+
     [API Routes] --> [MemberController]
     [API Routes] --> [HouseholdController]
+    [API Routes] --> [CommunityController]
+    [API Routes] --> [ZoneController]
 }
 
 database "SQLite Database" as DB
@@ -35,8 +49,12 @@ database "SQLite Database" as DB
 ' Relationships
 [Members Module] .right.> [API Routes] : HTTP/JSON
 [Households Module] .right.> [API Routes] : HTTP/JSON
+[Communities Module] .right.> [API Routes] : HTTP/JSON
+[Zones Module] .right.> [API Routes] : HTTP/JSON
 
 [MemberController] --> DB : Active Record Queries
 [HouseholdController] --> DB : Active Record Queries
+[CommunityController] --> DB : Active Record Queries
+[ZoneController] --> DB : Active Record Queries
 
 @enduml

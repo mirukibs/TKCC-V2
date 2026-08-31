@@ -13,7 +13,7 @@ class MemberResource extends JsonResource
         /** @var Member $member */
         $member = $this->resource;
 
-        return [
+        return array_merge([
             'id' => $member->getId(),
             'first_name' => $member->getName()->getFirstName(),
             'last_name' => $member->getName()->getLastName(),
@@ -27,6 +27,6 @@ class MemberResource extends JsonResource
             'employment_status' => $member->getEmploymentStatus()?->value,
             'employment_notes' => $member->getEmploymentNotes(),
             'household_id' => $member->getHouseholdId(),
-        ];
+        ], $member->getAggregates());
     }
 }
