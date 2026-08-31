@@ -22,7 +22,7 @@
           <h1 class="profile-name">{{ household.name }}</h1>
           <div class="profile-meta flex items-center gap-4 text-muted mt-2">
             <span class="flex items-center gap-1">
-              Community #{{ household.community_id }}
+              {{ communityName || 'Loading Community...' }}
             </span>
             <span>•</span>
             <span class="badge" :class="household.ownership === 'owned' ? 'badge-success' : 'badge-warning'">
@@ -40,12 +40,8 @@
         <h3 class="card-title">Household Information</h3>
         <div class="detail-list mt-4">
           <div class="detail-item">
-            <div class="detail-label">Household ID</div>
-            <div class="detail-value">#{{ household.id }}</div>
-          </div>
-          <div class="detail-item">
             <div class="detail-label">Community (Jumuiya)</div>
-            <div class="detail-value">{{ household.community_id }}</div>
+            <div class="detail-value">{{ communityName || 'Loading...' }}</div>
           </div>
           <div class="detail-item">
             <div class="detail-label">Ownership Type</div>
@@ -89,10 +85,12 @@ import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import HouseholdService from '../services/HouseholdService';
 import MemberService from '../../members/services/MemberService';
+import CommunityService from '../../communities/services/CommunityService';
 
 const route = useRoute();
 const household = ref(null);
 const leader = ref(null);
+const communityName = ref('');
 const loading = ref(true);
 
 const fetchHousehold = async () => {
@@ -103,7 +101,16 @@ const fetchHousehold = async () => {
     household.value = resolvedData;
     
     if (resolvedData.leader_id) {
-      await fetchLeader(resolvedData.leader_id);
+      fetchLeader(resolvedData.leader_id); // Fetch asynchronously without blocking completely
+    }
+    
+    if (resolvedData.community_id) {
+      try {
+        const commData = await CommunityService.getById(resolvedData.community_id);
+        communityName.value = commData?.data?.name ?? commData?.name ?? 'Unknown Community';
+      } catch (ce) {
+        communityName.value = 'Unknown Community';
+      }
     }
   } catch (error) {
     console.error('Failed to fetch household details:', error);

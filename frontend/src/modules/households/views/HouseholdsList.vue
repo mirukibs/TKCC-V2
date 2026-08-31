@@ -32,7 +32,7 @@
               <th>Name</th>
               <th>Community</th>
               <th>Ownership</th>
-              <th>Leader ID</th>
+              <th>Leader</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -51,12 +51,11 @@
                   </div>
                   <div>
                     <div class="font-medium">{{ household.name }}</div>
-                    <div class="text-xs text-muted">ID: #{{ household.id }}</div>
                   </div>
                 </div>
               </td>
               <td>
-                <div class="text-sm">Jumuiya {{ household.community_id }}</div>
+                <div class="text-sm">{{ getCommunityName(household.community_id) }}</div>
               </td>
               <td>
                 <span class="badge" :class="household.ownership === 'owned' ? 'badge-success' : 'badge-warning'">
@@ -64,7 +63,7 @@
                 </span>
               </td>
               <td>
-                <div class="text-sm">{{ household.leader_id ? '#' + household.leader_id : 'N/A' }}</div>
+                <div class="text-sm">{{ getLeaderName(household.leader_id) }}</div>
               </td>
               <td>
                 <div class="flex gap-2">
@@ -87,8 +86,12 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
 import HouseholdService from '../services/HouseholdService';
+import MemberService from '../../members/services/MemberService';
+import CommunityService from '../../communities/services/CommunityService';
 
 const households = ref([]);
+const communities = ref([]);
+const members = ref([]);
 const loading = ref(true);
 const searchQuery = ref('');
 const filterOwnership = ref('');
@@ -102,8 +105,15 @@ const fetchHouseholds = async () => {
     if (filterOwnership.value) params.ownership = filterOwnership.value;
     
     // Pass params for backend filtering when backend is ready
-    const response = await HouseholdService.getHouseholds(params);
-    households.value = response?.data ?? response ?? [];
+    const [householdsResponse, communitiesResponse, membersResponse] = await Promise.all([
+      HouseholdService.getHouseholds(params),
+      CommunityService.getAll(),
+      MemberService.getMembers()
+    ]);
+    
+    households.value = householdsResponse?.data ?? householdsResponse ?? [];
+    communities.value = communitiesResponse?.data ?? communitiesResponse ?? [];
+    members.value = membersResponse?.data ?? membersResponse ?? [];
   } catch (error) {
     console.error('Failed to fetch households:', error);
     households.value = [];
@@ -133,6 +143,17 @@ watch([searchQuery, filterOwnership], () => {
 const filteredHouseholds = computed(() => {
   return households.value; // The backend fetch handles the filtering
 });
+
+const getCommunityName = (id) => {
+  const c = communities.value.find(x => x.id === id);
+  return c ? c.name : 'Unknown Community';
+};
+
+const getLeaderName = (id) => {
+  if (!id) return 'N/A';
+  const m = members.value.find(x => x.id === id);
+  return m ? m.first_name + ' ' + m.last_name : 'Unknown Leader';
+};
 </script>
 
 <style scoped>

@@ -35,8 +35,13 @@
 
           <div class="grid-2">
             <div class="form-group">
-              <label class="form-label">Leader ID</label>
-              <input type="number" class="form-control" v-model="form.leader_id">
+              <label class="form-label">Leader</label>
+              <select id="leader_id" class="form-control" v-model="form.leader_id">
+                <option value="">-- No Leader Assigned --</option>
+                <option v-for="member in members" :key="member.id" :value="member.id">
+                  {{ member.first_name }} {{ member.last_name }}
+                </option>
+              </select>
             </div>
 
             <div class="form-group">
@@ -69,12 +74,14 @@ import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import HouseholdService from '../services/HouseholdService';
 import CommunityService from '../../communities/services/CommunityService';
+import MemberService from '../../members/services/MemberService';
 
 const router = useRouter();
 const route = useRoute();
 const loading = ref(false);
 const householdId = route.params.id;
 const communities = ref([]);
+const members = ref([]);
 
 const form = ref({
   name: '',
@@ -103,6 +110,13 @@ onMounted(async () => {
     communities.value = await CommunityService.getAll();
   } catch (error) {
     console.error('Failed to load communities', error);
+  }
+
+  try {
+    const response = await MemberService.getMembers();
+    members.value = response?.data ?? response ?? [];
+  } catch (error) {
+    console.error('Failed to load members', error);
   }
 });
 
