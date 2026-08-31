@@ -3,6 +3,7 @@ import membersRoutes from '../modules/members/router';
 import householdsRoutes from '../modules/households/router';
 import communitiesRoutes from '../modules/communities/router';
 import zonesRoutes from '../modules/zones/router';
+import sacramentsRoutes from '../modules/sacraments/router';
 
 const routes = [
     {
@@ -13,7 +14,8 @@ const routes = [
     ...membersRoutes,
     ...householdsRoutes,
     ...communitiesRoutes,
-    ...zonesRoutes
+    ...zonesRoutes,
+    ...sacramentsRoutes
 ];
 
 const router = createRouter({

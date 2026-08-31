@@ -8,6 +8,7 @@
         <router-link to="/households">Households</router-link>
         <router-link to="/communities">Communities</router-link>
         <router-link to="/zones">Zones</router-link>
+        <router-link to="/sacraments">Sacraments</router-link>
       </nav>
     </header>
     <main>
