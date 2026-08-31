@@ -38,12 +38,7 @@
         
         <div class="divider"></div>
         
-        <div class="detail-list">
-          <div class="detail-item">
-            <span class="detail-label">Zone ID</span>
-            <span class="detail-value">#{{ zone.id }}</span>
-          </div>
-        </div>
+        <!-- Detail list removed since no IDs are shown -->
       </div>
       
       <!-- Placeholder for associated items like Communities -->

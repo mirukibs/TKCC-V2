@@ -41,7 +41,6 @@
                   </div>
                   <div>
                     <div class="font-medium">{{ zone.name }}</div>
-                    <div class="text-xs text-muted">ID: #{{ zone.id }}</div>
                   </div>
                 </div>
               </td>
