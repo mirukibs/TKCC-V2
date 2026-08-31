@@ -2,6 +2,8 @@
 
 namespace App\Modules\Members\Infrastructure\Models;
 
+use App\Modules\Households\Infrastructure\Models\HouseholdModel;
+use App\Modules\Sacraments\Infrastructure\Models\SacramentModel;
 use Illuminate\Database\Eloquent\Model;
 
 class MemberModel extends Model
@@ -21,4 +23,14 @@ class MemberModel extends Model
         'employment_notes',
         'household_id',
     ];
+
+    public function sacrament()
+    {
+        return $this->hasOne(SacramentModel::class, 'member_id', 'id');
+    }
+
+    public function household()
+    {
+        return $this->belongsTo(HouseholdModel::class, 'household_id', 'id');
+    }
 }

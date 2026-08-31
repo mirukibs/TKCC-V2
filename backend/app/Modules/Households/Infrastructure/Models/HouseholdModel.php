@@ -2,6 +2,7 @@
 
 namespace App\Modules\Households\Infrastructure\Models;
 
+use App\Modules\Communities\Infrastructure\Models\CommunityModel;
 use Illuminate\Database\Eloquent\Model;
 
 class HouseholdModel extends Model
@@ -14,4 +15,9 @@ class HouseholdModel extends Model
         'leader_id',
         'ownership',
     ];
+
+    public function community()
+    {
+        return $this->belongsTo(CommunityModel::class, 'community_id', 'id');
+    }
 }
